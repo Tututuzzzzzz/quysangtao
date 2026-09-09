@@ -252,8 +252,8 @@ export default function LandingPage() {
     2: "Bước 2/5: Tên & Lĩnh vực ý tưởng (Idea Title & Category)",
     3: "Bước 3/5: Vấn đề & Giải pháp (Core Solution)",
     4: "Bước 4/5: Đồng tác giả CC & Đính kèm (Team & Media)",
-    5: "Bước 5/5: Xem lại & Gửi Leader Anh Tú (Review & Launch)",
-    6: "Hoàn tất: Đã thông báo tới Leader Anh Tú!"
+    5: "Bước 5/5: Xem trước & Gửi Quỹ Sáng Tạo (Preview & Launch)",
+    6: "Hoàn tất: Đã gửi tới Ban Quản trị Quỹ Sáng Tạo!"
   };
 
   const stepPercents = {
@@ -622,7 +622,7 @@ export default function LandingPage() {
               <div className="mt-4 space-y-2.5 text-xs text-slate-600">
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-[10px] shrink-0">1</span>
-                  <span><strong className="text-slate-900">Nộp ý tưởng:</strong> Điền Idea Builder trực tuyến gửi trực tiếp Leader Anh Tú.</span>
+                  <span><strong className="text-slate-900">Nộp ý tưởng:</strong> Điền Idea Builder trực tuyến gửi tới Ban Quản trị Quỹ Sáng Tạo.</span>
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-sky-500 text-white font-bold text-[10px] shrink-0">2</span>
@@ -630,7 +630,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-amber-500 text-white font-bold text-[10px] shrink-0">3</span>
-                  <span><strong className="text-slate-900">Cấp vốn & PoC:</strong> Nhận vốn tới 200M và cố vấn từ Leader Anh Tú & C-Level.</span>
+                  <span><strong className="text-slate-900">Cấp vốn & PoC:</strong> Nhận vốn tới 200M và cố vấn từ Ban Quản trị & C-Level.</span>
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-emerald-500 text-white font-bold text-[10px] shrink-0">4</span>
@@ -769,7 +769,7 @@ export default function LandingPage() {
                 <span className="material-symbols-outlined text-[16px]">rocket</span>
                 <span>LEADSGEN IDEA BUILDER • BIỂU MẪU ĐÓNG GÓP SÁNG KIẾN</span>
               </div>
-              <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Gửi trực tiếp tới Leader Anh Tú</h2>
+              <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Gửi trực tiếp tới Ban Quản trị Quỹ Sáng Tạo</h2>
             </div>
             <div className="flex items-center gap-2 self-start sm:self-auto">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-label-sm text-xs">
@@ -818,7 +818,7 @@ export default function LandingPage() {
                 { num: 2, label: 'Ý tưởng' },
                 { num: 3, label: 'Giải pháp' },
                 { num: 4, label: 'Đồng tác giả' },
-                { num: 5, label: 'Gửi Leader' }
+                { num: 5, label: 'Xem & Gửi' }
               ].map((s) => (
                 <button
                   key={s.num}
@@ -1281,29 +1281,42 @@ export default function LandingPage() {
                       onClick={() => goToStep(5)}
                       className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all active:scale-95"
                     >
-                      <span>Tiếp tục: Xem lại & Gửi Leader Anh Tú</span>
+                      <span>Tiếp tục: Xem trước & Gửi Quỹ Sáng Tạo</span>
                       <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* SLIDE 5: BƯỚC 5: XEM LẠI & GỬI LEADER ANH TÚ */}
+              {/* SLIDE 5: BƯỚC 5: XEM TRƯỚC & GỬI QUỸ SÁNG TẠO */}
               <div className="wizard-slide px-1">
-                <div className="space-y-5">
-                  <div className="p-4 sm:p-5 rounded-2xl bg-white border border-orange-200 space-y-4 shadow-sm">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                      <span className="font-label-sm text-xs uppercase tracking-wider text-orange-600 font-bold">
-                        Hồ Sơ Đề Xuất Sáng Kiến LeadsGen
-                      </span>
-                      <button type="button" onClick={() => goToStep(1)} className="text-xs text-orange-600 underline hover:text-orange-700 font-semibold">
-                        Chỉnh sửa
+                <div className="space-y-4">
+                  {/* Preview Alert Banner */}
+                  <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-3 shadow-sm">
+                    <span className="material-symbols-outlined text-amber-600 text-[22px] shrink-0 mt-0.5">preview</span>
+                    <div className="text-xs text-amber-900 leading-relaxed">
+                      <strong>Xem trước & Rà soát thông tin:</strong> Vui lòng kiểm tra lại toàn bộ thông tin đề xuất bên dưới trước khi bấm gửi chính thức. Nếu phát hiện sai sót, bạn có thể nhấn nút <span className="underline font-bold">Chỉnh sửa</span> tương ứng ở từng mục để sửa đổi.
+                    </div>
+                  </div>
+
+                  {/* Section 1: Submitter Info */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-orange-200 transition-all">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs">1</span>
+                        <span className="font-label-sm text-xs uppercase tracking-wider text-slate-800 font-bold">
+                          Thông tin người nộp hồ sơ
+                        </span>
+                      </div>
+                      <button type="button" onClick={() => goToStep(1)} className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 font-semibold hover:underline">
+                        <span className="material-symbols-outlined text-[14px]">edit</span>
+                        <span>Sửa</span>
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                       <div>
-                        <span className="text-slate-400 block font-medium">Người đăng ký:</span>
+                        <span className="text-slate-400 block font-medium">Họ tên người đăng ký:</span>
                         <span className="font-bold text-slate-900">{submitterName || "Chưa nhập"}</span>
                       </div>
                       <div>
@@ -1315,48 +1328,103 @@ export default function LandingPage() {
                         <span className="font-bold text-slate-900">{submitterPhone || "Chưa nhập"}</span>
                       </div>
                       <div>
-                        <span className="text-slate-400 block font-medium">Phòng ban & Chi nhánh:</span>
+                        <span className="text-slate-400 block font-medium">Phòng ban & Đơn vị:</span>
                         <span className="font-bold text-slate-900">
-                          {department === 'Khác' ? customDepartment : department} ({workingUnit})
+                          {department === 'Khác' ? (customDepartment || 'Phòng ban khác') : department} ({workingUnit})
                         </span>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="pt-3 border-t border-slate-100 space-y-2 text-xs">
+                  {/* Section 2: Idea Core & Category */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-orange-200 transition-all">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-xs">2</span>
+                        <span className="font-label-sm text-xs uppercase tracking-wider text-slate-800 font-bold">
+                          Tên ý tưởng & Lĩnh vực
+                        </span>
+                      </div>
+                      <button type="button" onClick={() => goToStep(2)} className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 font-semibold hover:underline">
+                        <span className="material-symbols-outlined text-[14px]">edit</span>
+                        <span>Sửa</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 text-xs">
                       <div>
                         <span className="text-slate-400 block font-medium">Tên sáng kiến:</span>
                         <h4 className="font-headline-md text-base font-bold text-slate-900">{ideaTitle || "Chưa đặt tên"}</h4>
                       </div>
                       <div>
-                        <span className="text-slate-400 block font-medium">Lĩnh vực:</span>
+                        <span className="text-slate-400 block font-medium">Lĩnh vực trọng tâm:</span>
                         <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 font-semibold border border-orange-200">
                           {selectedCategory}
                         </span>
                       </div>
-                      <div>
-                        <span className="text-slate-400 block font-medium">Vấn đề giải quyết:</span>
-                        <p className="text-slate-700 mt-0.5">{problemText || "(Chưa nhập)"}</p>
+                    </div>
+                  </div>
+
+                  {/* Section 3: Problem Description */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-orange-200 transition-all">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs">3</span>
+                        <span className="font-label-sm text-xs uppercase tracking-wider text-slate-800 font-bold">
+                          Vấn đề giải quyết
+                        </span>
                       </div>
+                      <button type="button" onClick={() => goToStep(3)} className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 font-semibold hover:underline">
+                        <span className="material-symbols-outlined text-[14px]">edit</span>
+                        <span>Sửa</span>
+                      </button>
+                    </div>
+
+                    <div className="text-xs">
+                      <p className="text-slate-700 whitespace-pre-line leading-relaxed">{problemText || "(Chưa nhập thông tin vấn đề)"}</p>
+                    </div>
+                  </div>
+
+                  {/* Section 4: Solution & Team */}
+                  <div className="p-4 rounded-2xl bg-white border border-slate-200 space-y-2.5 shadow-sm hover:border-orange-200 transition-all">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="w-5 h-5 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-xs">4</span>
+                        <span className="font-label-sm text-xs uppercase tracking-wider text-slate-800 font-bold">
+                          Phương án thực thi & Đồng tác giả
+                        </span>
+                      </div>
+                      <button type="button" onClick={() => goToStep(4)} className="inline-flex items-center gap-1 text-xs text-orange-600 hover:text-orange-700 font-semibold hover:underline">
+                        <span className="material-symbols-outlined text-[14px]">edit</span>
+                        <span>Sửa</span>
+                      </button>
+                    </div>
+
+                    <div className="space-y-2 text-xs">
                       <div>
-                        <span className="text-slate-400 block font-medium">Phương án thực thi:</span>
-                        <p className="text-slate-700 mt-0.5">{solutionText || "(Chưa nhập)"}</p>
+                        <span className="text-slate-400 block font-medium mb-0.5">Phương án thực thi:</span>
+                        <p className="text-slate-700 whitespace-pre-line leading-relaxed">{solutionText || "(Chưa nhập phương án)"}</p>
                       </div>
                       {coauthors.length > 0 && (
-                        <div>
-                          <span className="text-slate-400 block font-medium">Đồng tác giả CC:</span>
-                          <span className="text-slate-800 font-medium">
-                            {coauthors.map((c) => `${c.name} (${c.email})`).join(', ')}
-                          </span>
+                        <div className="pt-2 border-t border-slate-100">
+                          <span className="text-slate-400 block font-medium mb-1">Đồng tác giả CC:</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {coauthors.map((c, idx) => (
+                              <span key={idx} className="px-2 py-0.5 rounded bg-slate-100 text-slate-800 font-medium border border-slate-200">
+                                {c.name} ({c.email})
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Leader Anh Tú Email Notice Banner */}
+                  {/* Quỹ Sáng Tạo Notice Banner */}
                   <div className="p-3.5 rounded-xl bg-orange-50 border border-orange-200 flex items-start gap-3 shadow-sm">
-                    <span className="material-symbols-outlined text-orange-600 text-[22px] shrink-0 mt-0.5">mail</span>
+                    <span className="material-symbols-outlined text-orange-600 text-[22px] shrink-0 mt-0.5">verified_user</span>
                     <div className="text-xs text-slate-700 leading-relaxed">
-                      Thông tin sáng kiến sẽ được gửi trực tiếp tới email của <strong className="text-slate-900 font-bold">Leader Anh Tú</strong> (<span className="text-orange-600 font-semibold">hoangthotudev@gmail.com</span>) và đồng gửi CC cho các thành viên tham gia dự án.
+                      Thông tin sáng kiến sẽ được gửi trực tiếp tới <strong className="text-slate-900 font-bold">Ban Quản trị Quỹ Sáng Tạo LeadsGen</strong> và đồng gửi CC cho các thành viên tham gia dự án.
                     </div>
                   </div>
 
@@ -1368,7 +1436,7 @@ export default function LandingPage() {
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-xs sm:text-sm font-semibold transition-all border border-slate-200 active:scale-95"
                     >
                       <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-                      <span>Quay lại</span>
+                      <span>Quay lại bước 4</span>
                     </button>
                     <button
                       type="button"
@@ -1382,12 +1450,12 @@ export default function LandingPage() {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          <span>Đang gửi mail cho Leader Anh Tú...</span>
+                          <span>Đang gửi tới Quỹ Sáng Tạo...</span>
                         </>
                       ) : (
                         <>
-                          <span className="material-symbols-outlined text-[20px]">send</span>
-                          <span>Gửi sáng kiến cho Leader Anh Tú</span>
+                          <span className="material-symbols-outlined text-[20px]">rocket_launch</span>
+                          <span>Xác Nhận & Gửi Quỹ Sáng Tạo</span>
                         </>
                       )}
                     </button>
@@ -1409,7 +1477,7 @@ export default function LandingPage() {
                       Tuyệt vời! Ý tưởng của bạn đã được gửi thành công.
                     </h3>
                     <p className="font-body-md text-sm text-slate-600 leading-relaxed">
-                      Email thông báo đã được gửi trực tiếp tới <strong className="text-slate-900">Leader Anh Tú</strong> (hoangthotudev@gmail.com) và các đồng tác giả. Ban Quản trị Quỹ sẽ phản hồi tới email của bạn trong vòng <strong className="text-sky-600">48 giờ làm việc</strong>.
+                      Email thông báo đã được gửi trực tiếp tới <strong className="text-slate-900">Ban Quản trị Quỹ Sáng Tạo LeadsGen</strong> và các đồng tác giả. Ban Quản trị Quỹ sẽ phản hồi tới email của bạn trong vòng <strong className="text-sky-600">48 giờ làm việc</strong>.
                     </p>
                   </div>
                   <div className="p-4 max-w-md mx-auto rounded-2xl bg-white border border-slate-200 flex items-center justify-around text-xs shadow-sm">
@@ -1483,7 +1551,7 @@ export default function LandingPage() {
               },
               {
                 q: "Tôi muốn thêm các đồng nghiệp khác đồng nhận thông tin mail thì làm như thế nào?",
-                a: "Ngay tại Bước 4 của Idea Builder, bạn có thể điền Tên và Email của các đồng tác giả. Hệ thống sẽ tự động đồng gửi CC thông báo cho tất cả các thành viên khi bạn bấm gửi cho Leader Anh Tú."
+                a: "Ngay tại Bước 4 của Idea Builder, bạn có thể điền Tên và Email của các đồng tác giả. Hệ thống sẽ tự động đồng gửi CC thông báo cho tất cả các thành viên khi bạn bấm gửi cho Ban Quản trị Quỹ Sáng Tạo."
               }
             ].map((faq, idx) => {
               const isOpen = openFaq === idx;
