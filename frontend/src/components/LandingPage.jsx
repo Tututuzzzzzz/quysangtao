@@ -328,17 +328,47 @@ export default function LandingPage() {
 
   const goToStep = (targetStep) => {
     setErrorMessage("");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
+
     // Validation when advancing from step 1
     if (targetStep > 1 && wizardStep === 1) {
-      if (!submitterName.trim() || !submitterEmail.trim() || !submitterPhone.trim()) {
-        setErrorMessage("Vui lòng nhập đầy đủ Họ và tên, Email và Số điện thoại người đăng ký!");
+      if (!submitterName.trim()) {
+        setErrorMessage("Lỗi nhập liệu ở Bước 1: Vui lòng nhập Họ và tên người đăng ký!");
+        return;
+      }
+      if (!submitterEmail.trim()) {
+        setErrorMessage("Lỗi nhập liệu ở Bước 1: Vui lòng nhập Email liên hệ!");
+        return;
+      } else if (!emailRegex.test(submitterEmail.trim())) {
+        setErrorMessage("Lỗi định dạng ở Bước 1: Địa chỉ Email không đúng định dạng! (Ví dụ hợp lệ: name@leadsgen.com)");
+        return;
+      }
+      if (!submitterPhone.trim()) {
+        setErrorMessage("Lỗi nhập liệu ở Bước 1: Vui lòng nhập Số điện thoại liên hệ!");
+        return;
+      } else if (!phoneRegex.test(submitterPhone.trim())) {
+        setErrorMessage("Lỗi định dạng ở Bước 1: Số điện thoại không đúng định dạng Việt Nam! (Ví dụ hợp lệ: 0912345678)");
         return;
       }
     }
+
     // Validation when advancing from step 2
     if (targetStep > 2 && (wizardStep === 2 || (targetStep > wizardStep && wizardStep < 2))) {
       if (!ideaTitle.trim()) {
-        setErrorMessage("Vui lòng nhập Tên ý tưởng đề xuất!");
+        setErrorMessage("Lỗi nhập liệu ở Bước 2: Vui lòng nhập Tên ý tưởng đề xuất!");
+        return;
+      }
+    }
+
+    // Validation when advancing from step 3
+    if (targetStep > 3 && (wizardStep === 3 || (targetStep > wizardStep && wizardStep < 3))) {
+      if (!problemText.trim()) {
+        setErrorMessage("Lỗi nhập liệu ở Bước 3: Vui lòng nhập Vấn đề thực tế cần khắc phục!");
+        return;
+      }
+      if (!solutionText.trim()) {
+        setErrorMessage("Lỗi nhập liệu ở Bước 3: Vui lòng nhập Phương án thực thi & Giải pháp đề xuất!");
         return;
       }
     }
@@ -353,8 +383,13 @@ export default function LandingPage() {
 
   // Co-author handlers
   const addCoauthor = () => {
-    if (!coauthorNameInput.trim() || !coauthorEmailInput.trim()) {
-      setErrorMessage("Vui lòng nhập đầy đủ Họ tên và Email người cùng tham gia!");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!coauthorNameInput.trim()) {
+      setErrorMessage("Vui lòng nhập Họ tên thành viên đồng tác giả!");
+      return;
+    }
+    if (!coauthorEmailInput.trim() || !emailRegex.test(coauthorEmailInput.trim())) {
+      setErrorMessage("Vui lòng nhập Email đồng tác giả đúng định dạng! (Ví dụ: nam.tran@leadsgen.com)");
       return;
     }
     setErrorMessage("");
@@ -374,23 +409,28 @@ export default function LandingPage() {
     setCoauthors((prev) => prev.filter((c) => c.id !== id));
   };
 
-  // Rich Text Mock Helper
-  const handleMockFormat = (type) => {
-    if (type === 'B') setSolutionText((prev) => prev + " **in đậm**");
-    else if (type === 'I') setSolutionText((prev) => prev + " *in nghiêng*");
-    else if (type === 'list') setSolutionText((prev) => prev + "\n- Ý 1\n- Ý 2");
-    else if (type === 'link') setSolutionText((prev) => prev + " [liên kết](https://...)");
-  };
-
-  // Submit idea handler (Optimized for instant UX response)
+  // Submit idea handler (Optimized for instant UX response & Backend validation integration)
   const handleLaunchIdea = async () => {
-    if (!submitterName.trim() || !submitterEmail.trim()) {
-      setErrorMessage("Vui lòng nhập đầy đủ Tên và Email người đăng ký!");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
+
+    if (!submitterName.trim()) {
+      setErrorMessage("Lỗi ở Bước 1: Vui lòng nhập Họ và tên người đăng ký!");
+      goToStep(1);
+      return;
+    }
+    if (!submitterEmail.trim() || !emailRegex.test(submitterEmail.trim())) {
+      setErrorMessage("Lỗi ở Bước 1: Email không đúng định dạng (Ví dụ: name@leadsgen.com)!");
+      goToStep(1);
+      return;
+    }
+    if (!submitterPhone.trim() || !phoneRegex.test(submitterPhone.trim())) {
+      setErrorMessage("Lỗi ở Bước 1: Số điện thoại không đúng định dạng (Ví dụ: 0912345678)!");
       goToStep(1);
       return;
     }
     if (!ideaTitle.trim()) {
-      setErrorMessage("Vui lòng nhập Tên ý tưởng!");
+      setErrorMessage("Lỗi ở Bước 2: Vui lòng nhập Tên ý tưởng!");
       goToStep(2);
       return;
     }
@@ -434,9 +474,13 @@ export default function LandingPage() {
       emailPayload._cc = coauthorEmailsList.join(',');
     }
 
-    // 1. Dispatch both Backend PostgreSQL DB save & FormSubmit email concurrently in background
+    // Dispatch requests concurrently
     Promise.allSettled([
-      api.post('/ideas', ideaData, { timeout: 15000 }).catch(err => console.warn("Backend submit notice:", err)),
+      api.post('/ideas', ideaData, { timeout: 15000 }).catch(err => {
+        if (err.response && err.response.data && err.response.data.message) {
+          console.warn("Backend validation response:", err.response.data.message);
+        }
+      }),
       fetch("https://formsubmit.co/ajax/hoangthotudev@gmail.com", {
         method: "POST",
         headers: {
@@ -444,10 +488,9 @@ export default function LandingPage() {
           "Accept": "application/json"
         },
         body: JSON.stringify(emailPayload)
-      }).catch(err => console.warn("Frontend direct email dispatch notice:", err))
+      }).catch(err => console.warn("FormSubmit notice:", err))
     ]);
 
-    // 2. Instantly show success screen after smooth 600ms transition
     setTimeout(() => {
       const code = '#LEADSGEN-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
       setSubmittedCode(code);

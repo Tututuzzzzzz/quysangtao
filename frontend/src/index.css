@@ -27,6 +27,21 @@
   h1, h2, h3, h4, h5, h6 {
     text-wrap: balance;
   }
+
+  /* Remove default browser black outline and Tailwind default black rings on input focus */
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.25) !important;
+    border-color: #f97316 !important;
+  }
+
+  /* Styled blurred placeholder text */
+  ::placeholder {
+    color: #94a3b8 !important;
+    opacity: 0.75 !important;
+  }
 }
 
 /* Typography Utility Classes */
