@@ -244,6 +244,66 @@ export default function LandingPage() {
   const [coauthorNameInput, setCoauthorNameInput] = useState("");
   const [coauthorEmailInput, setCoauthorEmailInput] = useState("");
 
+  const handleFormatText = (type) => {
+    const textarea = document.getElementById('input-solution');
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = solutionText.substring(start, end);
+    let replacement = '';
+    let cursorOffset = 0;
+
+    switch (type) {
+      case 'B':
+        if (selectedText) {
+          replacement = `**${selectedText}**`;
+          cursorOffset = replacement.length;
+        } else {
+          replacement = '**Văn bản in đậm**';
+          cursorOffset = replacement.length - 2;
+        }
+        break;
+      case 'I':
+        if (selectedText) {
+          replacement = `*${selectedText}*`;
+          cursorOffset = replacement.length;
+        } else {
+          replacement = '*Văn bản in nghiêng*';
+          cursorOffset = replacement.length - 1;
+        }
+        break;
+      case 'list':
+        if (selectedText) {
+          replacement = selectedText.split('\n').map(line => line.startsWith('- ') ? line : `- ${line}`).join('\n');
+          cursorOffset = replacement.length;
+        } else {
+          replacement = '\n- Ý thứ nhất\n- Ý thứ hai\n';
+          cursorOffset = replacement.length;
+        }
+        break;
+      case 'link':
+        if (selectedText) {
+          replacement = `[${selectedText}](https://...)`;
+          cursorOffset = replacement.length;
+        } else {
+          replacement = '[Tiêu đề link](https://...)';
+          cursorOffset = replacement.length;
+        }
+        break;
+      default:
+        return;
+    }
+
+    const newText = solutionText.substring(0, start) + replacement + solutionText.substring(end);
+    setSolutionText(newText);
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(start + cursorOffset, start + cursorOffset);
+    }, 50);
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedCode, setSubmittedCode] = useState('');
 
@@ -1083,17 +1143,14 @@ export default function LandingPage() {
                 <div className="space-y-5">
                   {/* Problem Question */}
                   <div>
-                    <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center justify-between mb-1.5">
                       <label className="font-headline-sm text-xs sm:text-sm font-bold text-slate-900" htmlFor="input-problem">
-                        1. Vấn đề / Nỗi đau thực tế cần khắc phục:
+                        1. Vấn đề thực tế cần khắc phục:
                       </label>
                       <span className="text-[11px] font-mono-metric text-slate-500 font-semibold">
                         {problemText.length}/500
                       </span>
                     </div>
-                    <p className="font-body-sm text-[11px] text-slate-500 mb-2 italic">
-                      Mô tả thực trạng lãng phí thời gian, nguồn lực hoặc khó khăn trong công việc hiện tại...
-                    </p>
                     <textarea
                       id="input-problem"
                       rows={3}
@@ -1118,13 +1175,13 @@ export default function LandingPage() {
 
                     {/* Rich text toolbar */}
                     <div className="flex items-center gap-1 p-1.5 rounded-t-xl bg-slate-100 border-x border-t border-slate-200">
-                      <button type="button" onClick={() => handleMockFormat('B')} title="Bôi đậm" className="p-1 rounded hover:bg-slate-200 text-slate-700 font-bold text-xs px-2">B</button>
-                      <button type="button" onClick={() => handleMockFormat('I')} title="In nghiêng" className="p-1 rounded hover:bg-slate-200 text-slate-700 italic text-xs px-2">I</button>
+                      <button type="button" onClick={() => handleFormatText('B')} title="Bôi đậm (**text**)" className="p-1.5 rounded hover:bg-slate-200 text-slate-700 font-bold text-xs px-2.5 transition-colors">B</button>
+                      <button type="button" onClick={() => handleFormatText('I')} title="In nghiêng (*text*)" className="p-1.5 rounded hover:bg-slate-200 text-slate-700 italic text-xs px-2.5 transition-colors">I</button>
                       <span className="h-4 w-[1px] bg-slate-300 mx-1"></span>
-                      <button type="button" onClick={() => handleMockFormat('list')} title="Danh sách" className="p-1 rounded hover:bg-slate-200 text-slate-700 flex items-center">
+                      <button type="button" onClick={() => handleFormatText('list')} title="Tạo danh sách (- ý)" className="p-1.5 rounded hover:bg-slate-200 text-slate-700 flex items-center px-2 transition-colors">
                         <span className="material-symbols-outlined text-[16px]">format_list_bulleted</span>
                       </button>
-                      <button type="button" onClick={() => handleMockFormat('link')} title="Chèn liên kết" className="p-1 rounded hover:bg-slate-200 text-slate-700 flex items-center">
+                      <button type="button" onClick={() => handleFormatText('link')} title="Chèn liên kết ([link](url))" className="p-1.5 rounded hover:bg-slate-200 text-slate-700 flex items-center px-2 transition-colors">
                         <span className="material-symbols-outlined text-[16px]">link</span>
                       </button>
                     </div>
