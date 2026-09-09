@@ -238,6 +238,7 @@ export default function LandingPage() {
   const [problemText, setProblemText] = useState("");
   const [solutionText, setSolutionText] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // Co-authors for CC email list
   const [coauthors, setCoauthors] = useState([]);
@@ -1319,7 +1320,7 @@ export default function LandingPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100 flex-wrap gap-3">
                     <button
                       type="button"
                       onClick={() => goToStep(3)}
@@ -1328,14 +1329,24 @@ export default function LandingPage() {
                       <span className="material-symbols-outlined text-[18px]">arrow_back</span>
                       <span>Quay lại</span>
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => goToStep(5)}
-                      className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all active:scale-95"
-                    >
-                      <span>Tiếp tục: Xem trước & Gửi Quỹ Sáng Tạo</span>
-                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
-                    </button>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setShowPreviewModal(true)}
+                        className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-label-md text-xs sm:text-sm font-bold transition-all border border-slate-300 active:scale-95 shadow-sm"
+                      >
+                        <span className="material-symbols-outlined text-orange-600 text-[18px]">visibility</span>
+                        <span>Xem Trước (Preview)</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => goToStep(5)}
+                        className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all active:scale-95 text-xs sm:text-sm"
+                      >
+                        <span>Tiếp tục: Xem lại & Gửi Quỹ Sáng Tạo</span>
+                        <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1344,11 +1355,21 @@ export default function LandingPage() {
               <div className="wizard-slide px-1">
                 <div className="space-y-4">
                   {/* Preview Alert Banner */}
-                  <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-3 shadow-sm">
-                    <span className="material-symbols-outlined text-amber-600 text-[22px] shrink-0 mt-0.5">preview</span>
-                    <div className="text-xs text-amber-900 leading-relaxed">
-                      <strong>Xem trước & Rà soát thông tin:</strong> Vui lòng kiểm tra lại toàn bộ thông tin đề xuất bên dưới trước khi bấm gửi chính thức. Nếu phát hiện sai sót, bạn có thể nhấn nút <span className="underline font-bold">Chỉnh sửa</span> tương ứng ở từng mục để sửa đổi.
+                  <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-between gap-3 shadow-sm flex-wrap sm:flex-nowrap">
+                    <div className="flex items-start gap-3">
+                      <span className="material-symbols-outlined text-amber-600 text-[22px] shrink-0 mt-0.5">preview</span>
+                      <div className="text-xs text-amber-900 leading-relaxed">
+                        <strong>Xem trước & Rà soát thông tin:</strong> Vui lòng kiểm tra lại toàn bộ thông tin đề xuất bên dưới trước khi bấm gửi chính thức. Nếu phát hiện sai sót, bạn có thể nhấn nút <span className="underline font-bold">Chỉnh sửa</span> tương ứng ở từng mục.
+                      </div>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => setShowPreviewModal(true)}
+                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shrink-0 shadow-sm transition-all flex items-center gap-1.5 active:scale-95"
+                    >
+                      <span className="material-symbols-outlined text-[16px]">visibility</span>
+                      <span>Mở Cửa Sổ Xem Trước</span>
+                    </button>
                   </div>
 
                   {/* Section 1: Submitter Info */}
@@ -1633,6 +1654,142 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* FULL IDEA PREVIEW MODAL */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl border border-slate-200 relative my-8">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
+                  <span className="material-symbols-outlined text-[24px]">visibility</span>
+                </div>
+                <div>
+                  <h3 className="font-headline-md text-lg font-bold text-slate-900">Xem Trước Hồ Sơ Đề Xuất Sáng Kiến</h3>
+                  <p className="text-xs text-slate-500">Rà soát lại toàn bộ thông tin đã điền trước khi gửi tới Quỹ Sáng Tạo</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowPreviewModal(false)}
+                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition-colors"
+              >
+                <span className="material-symbols-outlined text-[20px]">close</span>
+              </button>
+            </div>
+
+            {/* Modal Body: Proposal Summary */}
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-1 text-xs">
+              {/* 1. Submitter */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="font-bold text-orange-600 uppercase tracking-wider text-[11px]">1. THÔNG TIN NGƯỜI ĐĂNG KÝ</span>
+                  <button
+                    type="button"
+                    onClick={() => { setShowPreviewModal(false); goToStep(1); }}
+                    className="text-orange-600 hover:underline font-semibold"
+                  >
+                    Chỉnh sửa (Bước 1)
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                  <div><span className="text-slate-500">Họ tên:</span> <strong className="text-slate-900">{submitterName || "Chưa nhập"}</strong></div>
+                  <div><span className="text-slate-500">Email:</span> <strong className="text-slate-900">{submitterEmail || "Chưa nhập"}</strong></div>
+                  <div><span className="text-slate-500">Số điện thoại:</span> <strong className="text-slate-900">{submitterPhone || "Chưa nhập"}</strong></div>
+                  <div><span className="text-slate-500">Phòng ban & Đơn vị:</span> <strong className="text-slate-900">{department === 'Khác' ? customDepartment : department} ({workingUnit})</strong></div>
+                </div>
+              </div>
+
+              {/* 2. Idea core */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="font-bold text-amber-600 uppercase tracking-wider text-[11px]">2. TÊN & LĨNH VỰC SÁNG KIẾN</span>
+                  <button
+                    type="button"
+                    onClick={() => { setShowPreviewModal(false); goToStep(2); }}
+                    className="text-orange-600 hover:underline font-semibold"
+                  >
+                    Chỉnh sửa (Bước 2)
+                  </button>
+                </div>
+                <div className="space-y-1 pt-1">
+                  <div><span className="text-slate-500">Tên sáng kiến:</span> <strong className="text-slate-900 text-sm block font-headline-md mt-0.5">{ideaTitle || "Chưa đặt tên"}</strong></div>
+                  <div><span className="text-slate-500">Lĩnh vực trọng tâm:</span> <span className="px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 font-bold ml-1">{selectedCategory}</span></div>
+                </div>
+              </div>
+
+              {/* 3. Problem */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="font-bold text-sky-600 uppercase tracking-wider text-[11px]">3. VẤN ĐỀ THỰC TẾ CẦN KHẮC PHỤC</span>
+                  <button
+                    type="button"
+                    onClick={() => { setShowPreviewModal(false); goToStep(3); }}
+                    className="text-orange-600 hover:underline font-semibold"
+                  >
+                    Chỉnh sửa (Bước 3)
+                  </button>
+                </div>
+                <p className="text-slate-800 leading-relaxed whitespace-pre-line pt-1">{problemText || "(Chưa nhập vấn đề)"}</p>
+              </div>
+
+              {/* 4. Solution */}
+              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="font-bold text-emerald-600 uppercase tracking-wider text-[11px]">4. PHƯƠNG ÁN THỰC THI & GIẢI PHÁP ĐỀ XUẤT</span>
+                  <button
+                    type="button"
+                    onClick={() => { setShowPreviewModal(false); goToStep(4); }}
+                    className="text-orange-600 hover:underline font-semibold"
+                  >
+                    Chỉnh sửa (Bước 4)
+                  </button>
+                </div>
+                <p className="text-slate-800 leading-relaxed whitespace-pre-line pt-1">{solutionText || "(Chưa nhập giải pháp)"}</p>
+                {coauthors.length > 0 && (
+                  <div className="pt-2 border-t border-slate-200">
+                    <span className="text-slate-500 block mb-1">Đồng tác giả CC:</span>
+                    <div className="flex flex-wrap gap-1">
+                      {coauthors.map((c) => (
+                        <span key={c.id} className="px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-800 font-medium">
+                          {c.name} ({c.email})
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Actions */}
+            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setShowPreviewModal(false)}
+                className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-all"
+              >
+                Đóng xem trước
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPreviewModal(false);
+                  if (wizardStep !== 5) {
+                    goToStep(5);
+                  } else {
+                    handleLaunchIdea();
+                  }
+                }}
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white font-bold text-xs shadow-md hover:scale-105 transition-all flex items-center gap-1.5 active:scale-95"
+              >
+                <span className="material-symbols-outlined text-[18px]">rocket_launch</span>
+                <span>{wizardStep === 5 ? "Xác Nhận & Gửi Quỹ Sáng Tạo" : "Đến Bước 5 (Xác Nhận & Gửi)"}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
