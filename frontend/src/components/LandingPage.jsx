@@ -381,7 +381,7 @@ export default function LandingPage() {
     else if (type === 'link') setSolutionText((prev) => prev + " [liên kết](https://...)");
   };
 
-  // Submit idea handler
+  // Submit idea handler (Optimized for instant UX response)
   const handleLaunchIdea = async () => {
     if (!submitterName.trim() || !submitterEmail.trim()) {
       setErrorMessage("Vui lòng nhập đầy đủ Tên và Email người đăng ký!");
@@ -399,66 +399,61 @@ export default function LandingPage() {
     const finalDept = department === 'Khác' ? (customDepartment.trim() || 'Phòng ban khác') : department;
     const coauthorEmailsList = coauthors.map((c) => c.email).filter(Boolean);
 
-    // 1. Save submission to Backend PostgreSQL DB
-    try {
-      await api.post('/ideas', {
-        title: ideaTitle,
-        categoryId: 1,
-        problemDescription: problemText.trim() || 'Tối ưu hoá quy trình làm việc và giải quyết vướng mắc thực tế tại đơn vị.',
-        proposedSolution: solutionText.trim() || 'Triển khai giải pháp ứng dụng công nghệ và chuẩn hoá các bước thực thi.',
-        expectedBenefit: "Tối ưu thời gian phê duyệt và nâng cao năng suất",
-        department: finalDept,
-        submitterName: submitterName,
-        submitterEmail: submitterEmail,
-        submitterPhone: submitterPhone,
-        workingUnit: workingUnit,
-        coauthorEmails: coauthorEmailsList.join(',')
-      });
-    } catch (err) {
-      console.warn("Backend submit notice:", err);
+    const ideaData = {
+      title: ideaTitle,
+      categoryId: 1,
+      problemDescription: problemText.trim() || 'Tối ưu hoá quy trình làm việc và giải quyết vướng mắc thực tế tại đơn vị.',
+      proposedSolution: solutionText.trim() || 'Triển khai giải pháp ứng dụng công nghệ và chuẩn hoá các bước thực thi.',
+      expectedBenefit: "Tối ưu thời gian phê duyệt và nâng cao năng suất",
+      department: finalDept,
+      submitterName: submitterName,
+      submitterEmail: submitterEmail,
+      submitterPhone: submitterPhone,
+      workingUnit: workingUnit,
+      coauthorEmails: coauthorEmailsList.join(',')
+    };
+
+    const emailPayload = {
+      _subject: `[Quỹ Sáng Tạo LeadsGen] Đề xuất sáng kiến mới: ${ideaTitle}`,
+      _template: "table",
+      _captcha: "false",
+      "1. Họ tên người đăng ký": submitterName,
+      "2. Email liên hệ": submitterEmail,
+      "3. Số điện thoại": submitterPhone,
+      "4. Phòng ban công tác": finalDept,
+      "5. Đơn vị / Chi nhánh": workingUnit,
+      "6. Tên sáng kiến": ideaTitle,
+      "7. Lĩnh vực trọng tâm": selectedCategory,
+      "8. Vấn đề giải quyết": problemText || "(Chưa nhập)",
+      "9. Phương án thực thi": solutionText || "(Chưa nhập)",
+      "10. Đồng tác giả CC": coauthorEmailsList.join(', ') || "Nộp cá nhân"
+    };
+
+    if (coauthorEmailsList.length > 0) {
+      emailPayload._cc = coauthorEmailsList.join(',');
     }
 
-    // 2. Direct Frontend Email Dispatch to Leader Anh Tú (hoangthotudev@gmail.com)
-    try {
-      const emailPayload = {
-        _subject: `[Quỹ Sáng Tạo LeadsGen] Đề xuất sáng kiến mới: ${ideaTitle}`,
-        _template: "table",
-        _captcha: "false",
-        "1. Họ tên người đăng ký": submitterName,
-        "2. Email liên hệ": submitterEmail,
-        "3. Số điện thoại": submitterPhone,
-        "4. Phòng ban công tác": finalDept,
-        "5. Đơn vị / Chi nhánh": workingUnit,
-        "6. Tên sáng kiến": ideaTitle,
-        "7. Lĩnh vực trọng tâm": selectedCategory,
-        "8. Vấn đề giải quyết": problemText || "(Chưa nhập)",
-        "9. Phương án thực thi": solutionText || "(Chưa nhập)",
-        "10. Đồng tác giả CC": coauthorEmailsList.join(', ') || "Nộp cá nhân"
-      };
-
-      if (coauthorEmailsList.length > 0) {
-        emailPayload._cc = coauthorEmailsList.join(',');
-      }
-
-      await fetch("https://formsubmit.co/ajax/hoangthotudev@gmail.com", {
+    // 1. Dispatch both Backend PostgreSQL DB save & FormSubmit email concurrently in background
+    Promise.allSettled([
+      api.post('/ideas', ideaData, { timeout: 15000 }).catch(err => console.warn("Backend submit notice:", err)),
+      fetch("https://formsubmit.co/ajax/hoangthotudev@gmail.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
         body: JSON.stringify(emailPayload)
-      });
-    } catch (emailErr) {
-      console.warn("Frontend direct email dispatch notice:", emailErr);
-    }
+      }).catch(err => console.warn("Frontend direct email dispatch notice:", err))
+    ]);
 
+    // 2. Instantly show success screen after smooth 600ms transition
     setTimeout(() => {
       const code = '#LEADSGEN-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
       setSubmittedCode(code);
       setIsSubmitting(false);
       setWizardStep(6);
       fireConfetti();
-    }, 1000);
+    }, 600);
   };
 
   // FAQ Accordion State
