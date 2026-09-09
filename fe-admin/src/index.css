@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --summit-navy: #020836;
+    --summit-royal: #081B7A;
+    --summit-cyan: #00E5FF;
+    --summit-emerald: #00D285;
+    --summit-neon: #00FF9D;
+  }
+
+  body {
+    background-color: #020836;
+    color: #F8FAFC;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+}
+
+/* AI Summit Admin Portal Styles */
+.bg-summit-navy {
+  background-color: #020836;
+}
+
+.bg-summit-hero-gradient {
+  background: linear-gradient(135deg, #020836 0%, #081B7A 40%, #00B37E 85%, #00E69D 100%);
+}
+
+.text-summit-gradient {
+  background: linear-gradient(135deg, #00FF9D 0%, #00E5FF 50%, #FFFFFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-card-summit {
+  background: rgba(5, 16, 64, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 255, 157, 0.2);
+  box-shadow: 0 10px 30px -10px rgba(0, 212, 133, 0.2);
+}
+
+.leadsgen-btn-primary {
+  background: linear-gradient(135deg, #00D285 0%, #00B074 100%);
+  color: #020836;
+  font-weight: 900;
+  box-shadow: 0 0 25px rgba(0, 210, 133, 0.45);
+  border: 1px solid rgba(0, 255, 157, 0.6);
+  transition: all 0.2s ease-in-out;
+}
+
+.leadsgen-btn-primary:hover {
+  background: linear-gradient(135deg, #00FF9D 0%, #00D285 100%);
+  color: #020836;
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px rgba(0, 255, 157, 0.65);
+}
+
+.leadsgen-btn-secondary {
+  background: linear-gradient(135deg, #081B7A 0%, #0B2189 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.25);
+  transition: all 0.2s ease-in-out;
+}
+
+.leadsgen-btn-secondary:hover {
+  background: linear-gradient(135deg, #0A26B3 0%, #0E2EC4 100%);
+  border-color: #00E5FF;
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(0, 229, 255, 0.45);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #020836;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00B37E;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00FF9D;
+}

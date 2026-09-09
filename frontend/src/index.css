@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --summit-navy: #020836;
+    --summit-royal: #081B7A;
+    --summit-cyan: #00E5FF;
+    --summit-emerald: #00D285;
+    --summit-neon: #00FF9D;
+    --summit-slate: #050E2E;
+    
+    /* Vanguard Horizon Theme Tokens */
+    --brand-orange-vibrant: #FF6B00;
+    --leads-orange: #f97316;
+    --leads-blue: #0284c7;
+    --leads-navy: #0f172a;
+  }
+
+  body {
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: 'Plus Jakarta Sans', 'Manrope', system-ui, -apple-system, sans-serif;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+  }
+}
+
+/* Typography Utility Classes */
+.font-display-hero {
+  font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+.font-headline-xl {
+  font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+.font-headline-lg {
+  font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+.font-headline-md {
+  font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+.font-headline-sm {
+  font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+.font-body-lg {
+  font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+.font-body-md {
+  font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+.font-body-sm {
+  font-family: 'Plus Jakarta Sans', 'Manrope', sans-serif;
+}
+.font-label-lg {
+  font-family: 'Space Grotesk', sans-serif;
+}
+.font-label-md {
+  font-family: 'Space Grotesk', sans-serif;
+}
+.font-label-sm {
+  font-family: 'Space Grotesk', sans-serif;
+}
+.font-mono-metric {
+  font-family: 'Space Grotesk', monospace;
+}
+
+/* Typing Cursor Effect */
+.typing-cursor::after {
+  content: '|';
+  animation: blink 0.9s infinite;
+  color: #f97316;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Scrollbar Hiding */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Vanguard Horizon Glassmorphism & Elevation */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+}
+
+.glow-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glow-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(249, 115, 22, 0.4);
+  box-shadow: 0 20px 30px -10px rgba(249, 115, 22, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+}
+
+/* Wizard Multi-Step Slider Track */
+.wizard-slider-track {
+  display: flex;
+  width: 500%;
+  transition: transform 550ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+.wizard-slide {
+  width: 20%;
+  flex-shrink: 0;
+}
+
+.cat-card {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cat-card:hover {
+  transform: translateY(-2px);
+}
+
+.carousel-dot.active {
+  width: 28px;
+  background-color: #ea580c;
+}
+
+/* Legacy Theme Utilities Retained for Compatibility */
+.bg-summit-navy {
+  background-color: #020836;
+}
+.text-summit-gradient {
+  background: linear-gradient(135deg, #00FF9D 0%, #00E5FF 50%, #FFFFFF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.glass-card-summit {
+  background: rgba(5, 16, 64, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 255, 157, 0.2);
+  box-shadow: 0 10px 30px -10px rgba(0, 212, 133, 0.2);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f97316;
+}
