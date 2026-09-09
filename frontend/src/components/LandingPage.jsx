@@ -1321,7 +1321,7 @@ export default function LandingPage() {
                   <div className="p-3.5 rounded-xl bg-orange-50 border border-orange-200 flex items-start gap-3 shadow-sm">
                     <span className="material-symbols-outlined text-orange-600 text-[22px] shrink-0 mt-0.5">mail</span>
                     <div className="text-xs text-slate-700 leading-relaxed">
-                      Thông tin sáng kiến sẽ được gửi trực tiếp tới email của <strong className="text-slate-900 font-bold">Leader Anh Tú</strong> (<span className="text-orange-600 font-semibold">tuht@leadsgen.com</span>) và đồng gửi CC cho các thành viên tham gia dự án.
+                      Thông tin sáng kiến sẽ được gửi trực tiếp tới email của <strong className="text-slate-900 font-bold">Leader Anh Tú</strong> (<span className="text-orange-600 font-semibold">hoangthotudev@gmail.com</span>) và đồng gửi CC cho các thành viên tham gia dự án.
                     </div>
                   </div>
 
@@ -1374,7 +1374,7 @@ export default function LandingPage() {
                       Tuyệt vời! Ý tưởng của bạn đã được gửi thành công.
                     </h3>
                     <p className="font-body-md text-sm text-slate-600 leading-relaxed">
-                      Email thông báo đã được gửi trực tiếp tới <strong className="text-slate-900">Leader Anh Tú</strong> (tuht@leadsgen.com) và các đồng tác giả. Ban Quản trị Quỹ sẽ phản hồi tới email của bạn trong vòng <strong className="text-sky-600">48 giờ làm việc</strong>.
+                      Email thông báo đã được gửi trực tiếp tới <strong className="text-slate-900">Leader Anh Tú</strong> (hoangthotudev@gmail.com) và các đồng tác giả. Ban Quản trị Quỹ sẽ phản hồi tới email của bạn trong vòng <strong className="text-sky-600">48 giờ làm việc</strong>.
                     </p>
                   </div>
                   <div className="p-4 max-w-md mx-auto rounded-2xl bg-white border border-slate-200 flex items-center justify-around text-xs shadow-sm">

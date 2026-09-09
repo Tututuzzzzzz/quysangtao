@@ -50,7 +50,7 @@ jwt:
 
 app:
   leader:
-    email: tuht@leadsgen.com
+    email: hoangthotudev@gmail.com
     name: "Anh Tú"
   cors:
     allowed-origins: "http://localhost:5173,http://localhost:3000,https://quysangtao.vercel.app"

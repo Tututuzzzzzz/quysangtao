@@ -16,7 +16,7 @@ public class EmailService {
     @Autowired(required = false)
     private JavaMailSender mailSender;
 
-    @Value("${app.leader.email:tuht@leadsgen.com}")
+    @Value("${app.leader.email:hoangthotudev@gmail.com}")
     private String leaderEmail;
 
     @Value("${app.leader.name:Anh Tú}")
