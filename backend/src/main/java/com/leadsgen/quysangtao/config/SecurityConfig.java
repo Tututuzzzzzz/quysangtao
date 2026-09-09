@@ -70,8 +70,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> 
                 auth.requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/ideas").permitAll()
-                    .requestMatchers("/api/ideas/public").permitAll()
+                    .requestMatchers("/api/ideas").permitAll()
+                    .requestMatchers("/api/ideas/**").permitAll()
                     .requestMatchers("/api/categories").permitAll()
                     .requestMatchers("/api/analytics/**").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
