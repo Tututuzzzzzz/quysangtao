@@ -26,10 +26,9 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="space-y-3 md:col-span-1">
             <div className="flex items-center gap-3">
-              <div className="h-9 px-2 py-0.5 rounded-lg bg-white ring-1 ring-orange-500/50 flex items-center justify-center">
+              <div className="h-9 px-2.5 py-0.5 rounded-lg bg-white ring-1 ring-orange-500/50 flex items-center justify-center">
                 <LeadsGenLogo size="sm" />
               </div>
-              <span className="font-headline-sm text-base font-bold text-white">LeadsGen</span>
             </div>
             <p className="font-body-sm text-xs text-slate-400 leading-relaxed">
               Cổng ươm mầm sáng kiến và tài trợ vốn hạt giống nội bộ LeadsGen Corporation. Thúc đẩy tinh thần doanh chủ trong từng cá nhân.
