@@ -1,5 +1,5 @@
 server:
-  port: 8085
+  port: ${PORT:8085}
 
 spring:
   application:
@@ -22,15 +22,15 @@ spring:
     init:
       mode: always
   rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
     listener:
       simple:
+        auto-startup: false
         retry:
-          enabled: true
-          max-attempts: 3
+          enabled: false
 
   mail:
     host: ${SPRING_MAIL_HOST:smtp.gmail.com}
