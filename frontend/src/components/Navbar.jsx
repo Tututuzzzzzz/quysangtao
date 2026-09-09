@@ -111,28 +111,37 @@ export default function Navbar() {
     <header className="sticky top-0 inset-x-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/80 shadow-sm transition-all duration-300">
       <div className="h-20 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
         {/* Left: Logo & Slogan */}
-        <Link to="/" className="flex items-center gap-3 group shrink-0">
-          <div className="h-11 px-2.5 py-1 rounded-xl bg-white ring-1 ring-orange-500/30 group-hover:ring-orange-500/70 shadow-sm flex items-center justify-center transition-all shrink-0">
+        <a
+          href="/"
+          onClick={(e) => {
+            e.preventDefault();
+            if (location.pathname === '/' || location.pathname === '/landing') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              navigate('/');
+              setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100);
+            }
+          }}
+          className="flex items-center gap-3 group shrink-0 cursor-pointer"
+        >
+          <div className="h-11 px-3 py-1 rounded-xl bg-white ring-1 ring-orange-500/30 group-hover:ring-orange-500/70 shadow-sm flex items-center justify-center transition-all shrink-0">
             <img
               alt="LeadsGen Logo"
-              className="h-7 w-auto object-contain"
+              className="h-8 w-auto object-contain"
               src="https://static.ybox.vn/2025/7/4/1753954730921-LeadsgenLogo2.png"
             />
           </div>
-          <div className="flex flex-col shrink-0">
-            <div className="flex items-center gap-2">
-              <span className="font-headline-sm text-base md:text-lg tracking-tight font-extrabold text-slate-900 group-hover:text-orange-600 transition-colors whitespace-nowrap">
-                LeadsGen
-              </span>
+          <div className="flex flex-col justify-center shrink-0">
+            <div className="flex items-center">
               <span className="px-2 py-0.5 rounded-full bg-orange-100 text-orange-600 font-label-sm text-[10px] uppercase tracking-wider font-bold border border-orange-200 whitespace-nowrap">
                 INNOVATION HUB
               </span>
             </div>
-            <span className="font-body-sm text-xs text-slate-500 hidden sm:inline whitespace-nowrap">
+            <span className="font-body-sm text-xs text-slate-500 hidden sm:inline whitespace-nowrap mt-0.5">
               Quỹ Đổi mới & Ươm mầm Sáng kiến
             </span>
           </div>
-        </Link>
+        </a>
 
         {/* Center: Smooth Nav Links */}
         <nav className="hidden lg:flex items-center gap-8 xl:gap-10 font-label-md text-sm font-semibold shrink-0">
