@@ -80,7 +80,7 @@ public class IdeaService {
                 .build();
         ideaHistoryRepository.save(history);
 
-        // Dispatch Email Notification to Leader Hà Mèo & CC Participants
+        // Dispatch Email Notification to Leader Anh Tú & CC Participants
         emailService.sendNewIdeaNotification(saved);
 
         // RabbitMQ message

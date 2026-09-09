@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailService {
 
-    @Value("${app.leader.email:hameo.leader@leadsgen.com}")
+    @Value("${app.leader.email:tuht@leadsgen.com}")
     private String leaderEmail;
 
-    @Value("${app.leader.name:Hà Mèo}")
+    @Value("${app.leader.name:Anh Tú}")
     private String leaderName;
 
     public void sendNewIdeaNotification(Idea idea) {

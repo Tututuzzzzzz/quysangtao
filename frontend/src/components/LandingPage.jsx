@@ -252,8 +252,8 @@ export default function LandingPage() {
     2: "Bước 2/5: Tên & Lĩnh vực ý tưởng (Idea Title & Category)",
     3: "Bước 3/5: Vấn đề & Giải pháp (Core Solution)",
     4: "Bước 4/5: Đồng tác giả CC & Đính kèm (Team & Media)",
-    5: "Bước 5/5: Xem lại & Gửi Leader Hà Mèo (Review & Launch)",
-    6: "Hoàn tất: Đã thông báo tới Leader Hà Mèo!"
+    5: "Bước 5/5: Xem lại & Gửi Leader Anh Tú (Review & Launch)",
+    6: "Hoàn tất: Đã thông báo tới Leader Anh Tú!"
   };
 
   const stepPercents = {
@@ -587,7 +587,7 @@ export default function LandingPage() {
               <div className="mt-4 space-y-2.5 text-xs text-slate-600">
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-[10px] shrink-0">1</span>
-                  <span><strong className="text-slate-900">Nộp ý tưởng:</strong> Điền Idea Builder trực tuyến gửi trực tiếp Leader Hà Mèo.</span>
+                  <span><strong className="text-slate-900">Nộp ý tưởng:</strong> Điền Idea Builder trực tuyến gửi trực tiếp Leader Anh Tú.</span>
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-sky-500 text-white font-bold text-[10px] shrink-0">2</span>
@@ -595,7 +595,7 @@ export default function LandingPage() {
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-amber-500 text-white font-bold text-[10px] shrink-0">3</span>
-                  <span><strong className="text-slate-900">Cấp vốn & PoC:</strong> Nhận vốn tới 200M và cố vấn từ Leader Hà Mèo & C-Level.</span>
+                  <span><strong className="text-slate-900">Cấp vốn & PoC:</strong> Nhận vốn tới 200M và cố vấn từ Leader Anh Tú & C-Level.</span>
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-emerald-500 text-white font-bold text-[10px] shrink-0">4</span>
@@ -604,7 +604,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-amber-600 font-semibold font-label-md">
-              <span>Đồng hành cùng Leader Hà Mèo & Tech Lead LeadsGen</span>
+              <span>Đồng hành cùng Leader Anh Tú & Tech Lead LeadsGen</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </div>
           </div>
@@ -734,7 +734,7 @@ export default function LandingPage() {
                 <span className="material-symbols-outlined text-[16px]">rocket</span>
                 <span>LEADSGEN IDEA BUILDER • BIỂU MẪU ĐÓNG GÓP SÁNG KIẾN</span>
               </div>
-              <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Gửi trực tiếp tới Leader Hà Mèo</h2>
+              <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Gửi trực tiếp tới Leader Anh Tú</h2>
             </div>
             <div className="flex items-center gap-2 self-start sm:self-auto">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-label-sm text-xs">
@@ -1246,14 +1246,14 @@ export default function LandingPage() {
                       onClick={() => goToStep(5)}
                       className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all active:scale-95"
                     >
-                      <span>Tiếp tục: Xem lại & Gửi Leader Hà Mèo</span>
+                      <span>Tiếp tục: Xem lại & Gửi Leader Anh Tú</span>
                       <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* SLIDE 5: BƯỚC 5: XEM LẠI & GỬI LEADER HÀ MÈO */}
+              {/* SLIDE 5: BƯỚC 5: XEM LẠI & GỬI LEADER ANH TÚ */}
               <div className="wizard-slide px-1">
                 <div className="space-y-5">
                   <div className="p-4 sm:p-5 rounded-2xl bg-white border border-orange-200 space-y-4 shadow-sm">
@@ -1317,11 +1317,11 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  {/* Leader Hà Mèo Email Notice Banner */}
+                  {/* Leader Anh Tú Email Notice Banner */}
                   <div className="p-3.5 rounded-xl bg-orange-50 border border-orange-200 flex items-start gap-3 shadow-sm">
                     <span className="material-symbols-outlined text-orange-600 text-[22px] shrink-0 mt-0.5">mail</span>
                     <div className="text-xs text-slate-700 leading-relaxed">
-                      Thông tin sáng kiến sẽ được gửi trực tiếp tới email của <strong className="text-slate-900 font-bold">Leader Hà Mèo</strong> (<span className="text-orange-600 font-semibold">hameo.leader@leadsgen.com</span>) và đồng gửi CC cho các thành viên tham gia dự án.
+                      Thông tin sáng kiến sẽ được gửi trực tiếp tới email của <strong className="text-slate-900 font-bold">Leader Anh Tú</strong> (<span className="text-orange-600 font-semibold">tuht@leadsgen.com</span>) và đồng gửi CC cho các thành viên tham gia dự án.
                     </div>
                   </div>
 
@@ -1347,12 +1347,12 @@ export default function LandingPage() {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          <span>Đang gửi mail cho Leader Hà Mèo...</span>
+                          <span>Đang gửi mail cho Leader Anh Tú...</span>
                         </>
                       ) : (
                         <>
                           <span className="material-symbols-outlined text-[20px]">send</span>
-                          <span>Gửi sáng kiến cho Leader Hà Mèo</span>
+                          <span>Gửi sáng kiến cho Leader Anh Tú</span>
                         </>
                       )}
                     </button>
@@ -1374,7 +1374,7 @@ export default function LandingPage() {
                       Tuyệt vời! Ý tưởng của bạn đã được gửi thành công.
                     </h3>
                     <p className="font-body-md text-sm text-slate-600 leading-relaxed">
-                      Email thông báo đã được gửi trực tiếp tới <strong className="text-slate-900">Leader Hà Mèo</strong> (hameo.leader@leadsgen.com) và các đồng tác giả. Ban Quản trị Quỹ sẽ phản hồi tới email của bạn trong vòng <strong className="text-sky-600">48 giờ làm việc</strong>.
+                      Email thông báo đã được gửi trực tiếp tới <strong className="text-slate-900">Leader Anh Tú</strong> (tuht@leadsgen.com) và các đồng tác giả. Ban Quản trị Quỹ sẽ phản hồi tới email của bạn trong vòng <strong className="text-sky-600">48 giờ làm việc</strong>.
                     </p>
                   </div>
                   <div className="p-4 max-w-md mx-auto rounded-2xl bg-white border border-slate-200 flex items-center justify-around text-xs shadow-sm">
@@ -1436,7 +1436,7 @@ export default function LandingPage() {
             {[
               {
                 q: "Tôi làm khối Vận hành / Nhân sự và không biết lập trình thì có tham gia được không?",
-                a: "Hoàn toàn được và rất được khuyến khích! Hơn 40% các sáng kiến thành công nhất đến từ tối ưu quy trình hành chính, nhân sự, chuỗi cung ứng thương mại điện tử và chăm sóc khách hàng. Khi ý tưởng qua vòng sơ loại, Leader Hà Mèo và Quỹ LeadsGen sẽ cấp kỹ sư công nghệ và thiết kế nội bộ hỗ trợ bạn xây dựng sản phẩm từ A đến Z."
+                a: "Hoàn toàn được và rất được khuyến khích! Hơn 40% các sáng kiến thành công nhất đến từ tối ưu quy trình hành chính, nhân sự, chuỗi cung ứng thương mại điện tử và chăm sóc khách hàng. Khi ý tưởng qua vòng sơ loại, Leader Anh Tú và Quỹ LeadsGen sẽ cấp kỹ sư công nghệ và thiết kế nội bộ hỗ trợ bạn xây dựng sản phẩm từ A đến Z."
               },
               {
                 q: "Bản quyền sở hữu trí tuệ của ý tưởng sẽ thuộc về ai?",
@@ -1448,7 +1448,7 @@ export default function LandingPage() {
               },
               {
                 q: "Tôi muốn thêm các đồng nghiệp khác đồng nhận thông tin mail thì làm như thế nào?",
-                a: "Ngay tại Bước 4 của Idea Builder, bạn có thể điền Tên và Email của các đồng tác giả. Hệ thống sẽ tự động đồng gửi CC thông báo cho tất cả các thành viên khi bạn bấm gửi cho Leader Hà Mèo."
+                a: "Ngay tại Bước 4 của Idea Builder, bạn có thể điền Tên và Email của các đồng tác giả. Hệ thống sẽ tự động đồng gửi CC thông báo cho tất cả các thành viên khi bạn bấm gửi cho Leader Anh Tú."
               }
             ].map((faq, idx) => {
               const isOpen = openFaq === idx;
