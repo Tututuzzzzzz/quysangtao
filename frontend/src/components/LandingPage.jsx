@@ -719,20 +719,20 @@ export default function LandingPage() {
               <span className="font-label-sm text-xs font-bold text-amber-600 uppercase tracking-wider">Lộ Trình Ươm Mầm</span>
               <h3 className="font-headline-md text-xl font-bold text-slate-900 mt-1">4 Bước Tới Hiện Thực Hóa</h3>
               <div className="mt-4 space-y-2.5 text-xs text-slate-600">
-                <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-[10px] shrink-0">1</span>
+                <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="w-2 h-2 rounded-full bg-orange-500 mt-1.5 shrink-0"></span>
                   <span><strong className="text-slate-900">Nộp ý tưởng:</strong> Điền Idea Builder trực tuyến gửi tới Ban Quản trị Quỹ Sáng Tạo.</span>
                 </div>
-                <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="w-5 h-5 rounded-full bg-sky-500 text-white font-bold text-[10px] shrink-0">2</span>
+                <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="w-2 h-2 rounded-full bg-sky-500 mt-1.5 shrink-0"></span>
                   <span><strong className="text-slate-900">Thẩm định 48h:</strong> Ban Quản trị Quỹ phản hồi & giải ngân thưởng 5M.</span>
                 </div>
-                <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="w-5 h-5 rounded-full bg-amber-500 text-white font-bold text-[10px] shrink-0">3</span>
+                <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 shrink-0"></span>
                   <span><strong className="text-slate-900">Cấp vốn & PoC:</strong> Nhận vốn tới 200M và cố vấn từ Ban Quản trị & C-Level.</span>
                 </div>
-                <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
-                  <span className="w-5 h-5 rounded-full bg-emerald-500 text-white font-bold text-[10px] shrink-0">4</span>
+                <div className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 mt-1.5 shrink-0"></span>
                   <span><strong className="text-slate-900">Thương mại hóa:</strong> Triển khai quy mô toàn tập đoàn & chia sẻ lợi nhuận.</span>
                 </div>
               </div>
