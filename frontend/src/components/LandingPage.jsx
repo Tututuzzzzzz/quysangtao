@@ -223,7 +223,8 @@ export default function LandingPage() {
 
   // Idea Builder Multi-Step Wizard Controller
   const [wizardStep, setWizardStep] = useState(1);
-  
+  const [errorMessage, setErrorMessage] = useState("");
+
   // Form Fields State
   const [submitterName, setSubmitterName] = useState("");
   const [submitterEmail, setSubmitterEmail] = useState("");
@@ -231,7 +232,7 @@ export default function LandingPage() {
   const [department, setDepartment] = useState("Khối Công nghệ & Sản phẩm");
   const [customDepartment, setCustomDepartment] = useState("");
   const [workingUnit, setWorkingUnit] = useState("Trụ sở chính");
-  
+
   const [ideaTitle, setIdeaTitle] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Sản phẩm & Công nghệ");
   const [problemText, setProblemText] = useState("");
@@ -264,33 +265,38 @@ export default function LandingPage() {
     6: "100%"
   };
 
-  const goToStep = (stepNumber) => {
-    if (stepNumber > 1 && wizardStep === 1) {
+  const goToStep = (targetStep) => {
+    setErrorMessage("");
+    // Validation when advancing from step 1
+    if (targetStep > 1 && wizardStep === 1) {
       if (!submitterName.trim() || !submitterEmail.trim() || !submitterPhone.trim()) {
-        alert('Vui lòng điền đầy đủ Họ tên, Email và Số điện thoại của người đăng ký!');
+        setErrorMessage("Vui lòng nhập đầy đủ Họ và tên, Email và Số điện thoại người đăng ký!");
         return;
       }
     }
-    if (stepNumber > 2 && wizardStep <= 2) {
+    // Validation when advancing from step 2
+    if (targetStep > 2 && (wizardStep === 2 || (targetStep > wizardStep && wizardStep < 2))) {
       if (!ideaTitle.trim()) {
-        alert('Vui lòng đặt tên cho ý tưởng của bạn!');
+        setErrorMessage("Vui lòng nhập Tên ý tưởng đề xuất!");
         return;
       }
     }
-    setWizardStep(stepNumber);
+
+    setWizardStep(targetStep);
 
     const builderSection = document.getElementById('idea-builder');
     if (builderSection) {
-      builderSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      builderSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
   // Co-author handlers
   const addCoauthor = () => {
     if (!coauthorNameInput.trim() || !coauthorEmailInput.trim()) {
-      alert('Vui lòng nhập đầy đủ Họ tên và Email người cùng tham gia!');
+      setErrorMessage("Vui lòng nhập đầy đủ Họ tên và Email người cùng tham gia!");
       return;
     }
+    setErrorMessage("");
     setCoauthors((prev) => [
       ...prev,
       {
@@ -318,17 +324,18 @@ export default function LandingPage() {
   // Submit idea handler
   const handleLaunchIdea = async () => {
     if (!submitterName.trim() || !submitterEmail.trim()) {
-      alert("Vui lòng nhập thông tin Tên và Email người đăng ký!");
+      setErrorMessage("Vui lòng nhập đầy đủ Tên và Email người đăng ký!");
       goToStep(1);
       return;
     }
     if (!ideaTitle.trim()) {
-      alert("Vui lòng nhập tên ý tưởng!");
+      setErrorMessage("Vui lòng nhập Tên ý tưởng!");
       goToStep(2);
       return;
     }
 
     setIsSubmitting(true);
+    setErrorMessage("");
     const finalDept = department === 'Khác' ? (customDepartment.trim() || 'Phòng ban khác') : department;
     const coauthorEmailsList = coauthors.map((c) => c.email).filter(Boolean);
 
@@ -714,7 +721,7 @@ export default function LandingPage() {
       </section>
 
       {/* 4. IDEA BUILDER: TRÁI TIM CỦA LANDING PAGE */}
-      <section id="idea-builder" className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section id="idea-builder" className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-16 scroll-mt-24">
         <div className="max-w-4xl mx-auto rounded-3xl bg-white border border-slate-200 shadow-xl p-4 sm:p-8 md:p-12 relative overflow-hidden">
           {/* Background Ambient Glow */}
           <div className="absolute -top-32 -right-32 w-80 h-80 bg-orange-200/30 rounded-full blur-3xl pointer-events-none" />
@@ -736,6 +743,21 @@ export default function LandingPage() {
               </span>
             </div>
           </div>
+
+          {/* Error / Alert Banner */}
+          {errorMessage && (
+            <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 flex items-start gap-3 text-xs text-red-700 relative z-10 animate-shake">
+              <span className="material-symbols-outlined text-red-500 text-[20px] shrink-0 mt-0.5">error</span>
+              <div className="flex-1 font-medium">{errorMessage}</div>
+              <button
+                type="button"
+                onClick={() => setErrorMessage("")}
+                className="text-red-400 hover:text-red-600 font-bold"
+              >
+                ×
+              </button>
+            </div>
+          )}
 
           {/* Progress Bar */}
           <div className="mb-8 relative z-10">
@@ -792,11 +814,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* WIZARD SLIDER TRACK */}
-          <div className="relative w-full overflow-hidden min-h-[460px]">
+          {/* WIZARD SLIDER CONTAINER (CLEAN 100% CONTAINER PER SLIDE) */}
+          <div className="relative w-full overflow-hidden min-h-[420px]">
             <div
               className="wizard-slider-track"
-              style={{ transform: `translateX(${(wizardStep - 1) * -16.666}%)` }}
+              style={{ transform: `translateX(${(wizardStep - 1) * -100}%)` }}
             >
               {/* SLIDE 1: BƯỚC 1: THÔNG TIN NGƯỜI ĐĂNG KÝ */}
               <div className="wizard-slide px-1">
@@ -957,7 +979,7 @@ export default function LandingPage() {
                     </div>
                   </div>
 
-                  {/* 6 Category Cards (Professional Icons) */}
+                  {/* 6 Category Cards */}
                   <div>
                     <label className="block font-headline-sm text-sm font-bold text-slate-900 mb-1">Lĩnh vực trọng tâm:</label>
                     <p className="font-body-sm text-xs text-slate-500 mb-4">Hệ thống sẽ điều phối Hội đồng chuyên môn thuộc mảng tương ứng tới thẩm định.</p>
