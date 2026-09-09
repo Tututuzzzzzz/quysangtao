@@ -344,8 +344,8 @@ export default function LandingPage() {
       await api.post('/ideas', {
         title: ideaTitle,
         categoryId: 1,
-        problemDescription: problemText,
-        proposedSolution: solutionText,
+        problemDescription: problemText.trim() || 'Tối ưu hoá quy trình làm việc và giải quyết vướng mắc thực tế tại đơn vị.',
+        proposedSolution: solutionText.trim() || 'Triển khai giải pháp ứng dụng công nghệ và chuẩn hoá các bước thực thi.',
         expectedBenefit: "Tối ưu thời gian phê duyệt và nâng cao năng suất",
         department: finalDept,
         submitterName: submitterName,
