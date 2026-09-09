@@ -1,9 +1,24 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import LeadsGenLogo from './LeadsGenLogo';
 import { MapPin, Mail, Globe, ExternalLink } from 'lucide-react';
 
 export default function Footer() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleNavAnchor = (e, hash) => {
+    e.preventDefault();
+    if (location.pathname === '/' || location.pathname === '/landing') {
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    } else {
+      navigate('/' + hash);
+    }
+  };
+
   return (
     <footer className="w-full bg-[#0f172a] text-slate-300 border-t border-slate-800 py-12 mt-auto">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -26,16 +41,49 @@ export default function Footer() {
             <h4 className="font-label-sm text-xs font-bold uppercase tracking-wider text-white">Điều Hướng Nhanh</h4>
             <ul className="space-y-2 text-xs font-label-md text-slate-400">
               <li>
-                <Link to="/landing" className="hover:text-orange-400 transition-colors">Về Quỹ Sáng Tạo</Link>
+                <a
+                  href="#why-what"
+                  onClick={(e) => handleNavAnchor(e, '#why-what')}
+                  className="hover:text-orange-400 transition-colors"
+                >
+                  Về Quỹ Sáng Tạo
+                </a>
               </li>
               <li>
-                <Link to="/" className="hover:text-orange-400 transition-colors">Bảng Điều Khiển Cá Nhân</Link>
+                <a
+                  href="#criteria"
+                  onClick={(e) => handleNavAnchor(e, '#criteria')}
+                  className="hover:text-orange-400 transition-colors"
+                >
+                  Tiêu Chí Xét Duyệt
+                </a>
               </li>
               <li>
-                <Link to="/submit" className="hover:text-orange-400 transition-colors">Gửi Ý Tưởng Mới</Link>
+                <a
+                  href="#idea-builder"
+                  onClick={(e) => handleNavAnchor(e, '#idea-builder')}
+                  className="hover:text-orange-400 transition-colors font-bold text-orange-400"
+                >
+                  Gửi Ý Tưởng Mới
+                </a>
               </li>
               <li>
-                <Link to="/leaderboard" className="hover:text-orange-400 transition-colors">Bảng Vinh Danh Leaderboard</Link>
+                <a
+                  href="#leaderboard"
+                  onClick={(e) => handleNavAnchor(e, '#leaderboard')}
+                  className="hover:text-orange-400 transition-colors"
+                >
+                  Bảng Vàng Vinh Danh
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#faqs"
+                  onClick={(e) => handleNavAnchor(e, '#faqs')}
+                  className="hover:text-orange-400 transition-colors"
+                >
+                  Câu Hỏi Thường Gặp
+                </a>
               </li>
             </ul>
           </div>
@@ -46,15 +94,15 @@ export default function Footer() {
             <ul className="space-y-2 text-xs text-slate-400">
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-                <span>Better Work (Tối ưu Năng Suất & AI)</span>
+                <span>Tối ưu Năng suất & Quy trình</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
-                <span>Better Workplace (Môi Trường Xanh & Tiện Ích)</span>
+                <span>Ứng dụng AI & Công nghệ mới</span>
               </li>
               <li className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>Tiết Kiệm Chi Phí & Ngân Sách</span>
+                <span>Trải nghiệm Nhân sự & Văn hóa</span>
               </li>
             </ul>
           </div>
