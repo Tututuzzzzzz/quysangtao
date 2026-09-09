@@ -165,18 +165,6 @@ export default function Navbar() {
             Câu hỏi thường gặp
           </a>
         </nav>
-
-        {/* Right: Glow CTA "Đóng góp ngay" */}
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-          <a
-            href="#idea-builder"
-            onClick={(e) => handleNavAnchor(e, '#idea-builder')}
-            className="relative inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white font-label-md text-xs sm:text-sm font-bold shadow-md shadow-orange-500/30 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/40 transition-all active:scale-95 shrink-0 whitespace-nowrap"
-          >
-            <span className="material-symbols-outlined text-[18px] animate-pulse">rocket_launch</span>
-            <span className="whitespace-nowrap">Đóng góp sáng kiến ngay</span>
-          </a>
-        </div>
       </div>
     </header>
   );
