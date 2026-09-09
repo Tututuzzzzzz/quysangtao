@@ -578,8 +578,8 @@ export default function LandingPage() {
           <h2 className="font-headline-xl text-3xl md:text-4xl font-extrabold text-slate-900 mt-2">
             Bệ Phóng Toàn Diện Cho Tinh Thần Đổi Mới
           </h2>
-          <p className="font-body-md text-slate-600 mt-2">
-            Không lý thuyết suông. Quỹ LeadsGen cung cấp nguồn lực tài chính, khung đánh giá minh bạch và quy trình thử nghiệm tinh gọn nhất.
+          <p className="font-body-md text-slate-600 mt-2 leading-relaxed">
+            Không lý thuyết suông. Quỹ LeadsGen cung cấp nguồn lực tài chính, khung đánh giá minh bạch <br />và quy trình thử nghiệm tinh gọn nhất.
           </p>
         </div>
 
