@@ -135,32 +135,32 @@ export default function Navbar() {
         </Link>
 
         {/* Center: Smooth Nav Links */}
-        <nav className="hidden lg:flex items-center gap-5 xl:gap-6 font-label-md text-sm font-semibold shrink-0">
+        <nav className="hidden lg:flex items-center gap-8 xl:gap-10 font-label-md text-sm font-semibold shrink-0">
           <a
             href="#why-what"
             onClick={(e) => handleNavAnchor(e, '#why-what')}
-            className="text-slate-600 hover:text-orange-600 transition-colors py-1 whitespace-nowrap"
+            className="text-slate-600 hover:text-orange-600 transition-colors py-1.5 whitespace-nowrap"
           >
             Về Quỹ
           </a>
           <a
             href="#criteria"
             onClick={(e) => handleNavAnchor(e, '#criteria')}
-            className="text-slate-600 hover:text-orange-600 transition-colors py-1 whitespace-nowrap"
+            className="text-slate-600 hover:text-orange-600 transition-colors py-1.5 whitespace-nowrap"
           >
             Tiêu chí
           </a>
           <a
             href="#leaderboard"
             onClick={(e) => handleNavAnchor(e, '#leaderboard')}
-            className="text-slate-600 hover:text-orange-600 transition-colors py-1 whitespace-nowrap"
+            className="text-slate-600 hover:text-orange-600 transition-colors py-1.5 whitespace-nowrap"
           >
             Bảng vàng
           </a>
           <a
             href="#faqs"
             onClick={(e) => handleNavAnchor(e, '#faqs')}
-            className="text-slate-600 hover:text-orange-600 transition-colors py-1 whitespace-nowrap"
+            className="text-slate-600 hover:text-orange-600 transition-colors py-1.5 whitespace-nowrap"
           >
             Câu hỏi thường gặp
           </a>

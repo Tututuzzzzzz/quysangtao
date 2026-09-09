@@ -39,12 +39,12 @@ export default function Footer() {
           {/* Quick Links */}
           <div className="space-y-3">
             <h4 className="font-label-sm text-xs font-bold uppercase tracking-wider text-white">Điều Hướng Nhanh</h4>
-            <ul className="space-y-2 text-xs font-label-md text-slate-400">
+            <ul className="space-y-3 text-xs sm:text-sm font-label-md text-slate-400">
               <li>
                 <a
                   href="#why-what"
                   onClick={(e) => handleNavAnchor(e, '#why-what')}
-                  className="hover:text-orange-400 transition-colors"
+                  className="hover:text-orange-400 transition-colors py-0.5 inline-block"
                 >
                   Về Quỹ Sáng Tạo
                 </a>
@@ -53,7 +53,7 @@ export default function Footer() {
                 <a
                   href="#criteria"
                   onClick={(e) => handleNavAnchor(e, '#criteria')}
-                  className="hover:text-orange-400 transition-colors"
+                  className="hover:text-orange-400 transition-colors py-0.5 inline-block"
                 >
                   Tiêu Chí Xét Duyệt
                 </a>
@@ -62,7 +62,7 @@ export default function Footer() {
                 <a
                   href="#idea-builder"
                   onClick={(e) => handleNavAnchor(e, '#idea-builder')}
-                  className="hover:text-orange-400 transition-colors font-bold text-orange-400"
+                  className="hover:text-orange-400 transition-colors font-bold text-orange-400 py-0.5 inline-block"
                 >
                   Gửi Ý Tưởng Mới
                 </a>
@@ -71,7 +71,7 @@ export default function Footer() {
                 <a
                   href="#leaderboard"
                   onClick={(e) => handleNavAnchor(e, '#leaderboard')}
-                  className="hover:text-orange-400 transition-colors"
+                  className="hover:text-orange-400 transition-colors py-0.5 inline-block"
                 >
                   Bảng Vàng Vinh Danh
                 </a>
@@ -80,7 +80,7 @@ export default function Footer() {
                 <a
                   href="#faqs"
                   onClick={(e) => handleNavAnchor(e, '#faqs')}
-                  className="hover:text-orange-400 transition-colors"
+                  className="hover:text-orange-400 transition-colors py-0.5 inline-block"
                 >
                   Câu Hỏi Thường Gặp
                 </a>
