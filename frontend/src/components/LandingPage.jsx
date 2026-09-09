@@ -339,6 +339,7 @@ export default function LandingPage() {
     const finalDept = department === 'Khác' ? (customDepartment.trim() || 'Phòng ban khác') : department;
     const coauthorEmailsList = coauthors.map((c) => c.email).filter(Boolean);
 
+    // 1. Save submission to Backend PostgreSQL DB
     try {
       await api.post('/ideas', {
         title: ideaTitle,
@@ -351,10 +352,43 @@ export default function LandingPage() {
         submitterEmail: submitterEmail,
         submitterPhone: submitterPhone,
         workingUnit: workingUnit,
-        coauthorEmails: coauthorEmailsList
+        coauthorEmails: coauthorEmailsList.join(',')
       });
     } catch (err) {
       console.warn("Backend submit notice:", err);
+    }
+
+    // 2. Direct Frontend Email Dispatch to Leader Anh Tú (hoangthotudev@gmail.com)
+    try {
+      const emailPayload = {
+        _subject: `[Quỹ Sáng Tạo LeadsGen] Đề xuất sáng kiến mới: ${ideaTitle}`,
+        _template: "table",
+        "1. Họ tên người đăng ký": submitterName,
+        "2. Email liên hệ": submitterEmail,
+        "3. Số điện thoại": submitterPhone,
+        "4. Phòng ban công tác": finalDept,
+        "5. Đơn vị / Chi nhánh": workingUnit,
+        "6. Tên sáng kiến": ideaTitle,
+        "7. Lĩnh vực trọng tâm": selectedCategory,
+        "8. Vấn đề giải quyết": problemText || "(Chưa nhập)",
+        "9. Phương án thực thi": solutionText || "(Chưa nhập)",
+        "10. Đồng tác giả CC": coauthorEmailsList.join(', ') || "Nộp cá nhân"
+      };
+
+      if (coauthorEmailsList.length > 0) {
+        emailPayload._cc = coauthorEmailsList.join(',');
+      }
+
+      await fetch("https://formsubmit.co/ajax/hoangthotudev@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(emailPayload)
+      });
+    } catch (emailErr) {
+      console.warn("Frontend direct email dispatch notice:", emailErr);
     }
 
     setTimeout(() => {
