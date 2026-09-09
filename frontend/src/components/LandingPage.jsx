@@ -363,6 +363,7 @@ export default function LandingPage() {
       const emailPayload = {
         _subject: `[Quỹ Sáng Tạo LeadsGen] Đề xuất sáng kiến mới: ${ideaTitle}`,
         _template: "table",
+        _captcha: "false",
         "1. Họ tên người đăng ký": submitterName,
         "2. Email liên hệ": submitterEmail,
         "3. Số điện thoại": submitterPhone,
