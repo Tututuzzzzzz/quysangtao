@@ -51,6 +51,6 @@ jwt:
 app:
   leader:
     email: hoangthotudev@gmail.com
-    name: "Anh Tú"
+    name: "Ban Quản trị Quỹ"
   cors:
     allowed-origins: "http://localhost:5173,http://localhost:3000,https://quysangtao.vercel.app"

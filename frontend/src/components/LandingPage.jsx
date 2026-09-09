@@ -738,7 +738,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-amber-600 font-semibold font-label-md">
-              <span>Đồng hành cùng Leader Anh Tú & Tech Lead LeadsGen</span>
+              <span>Đồng hành cùng Ban Quản trị & Tech Lead LeadsGen</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </div>
           </div>
@@ -1655,7 +1655,7 @@ export default function LandingPage() {
             {[
               {
                 q: "Tôi làm khối Vận hành / Nhân sự và không biết lập trình thì có tham gia được không?",
-                a: "Hoàn toàn được và rất được khuyến khích! Hơn 40% các sáng kiến thành công nhất đến từ tối ưu quy trình hành chính, nhân sự, chuỗi cung ứng thương mại điện tử và chăm sóc khách hàng. Khi ý tưởng qua vòng sơ loại, Leader Anh Tú và Quỹ LeadsGen sẽ cấp kỹ sư công nghệ và thiết kế nội bộ hỗ trợ bạn xây dựng sản phẩm từ A đến Z."
+                a: "Hoàn toàn được và rất được khuyến khích! Hơn 40% các sáng kiến thành công nhất đến từ tối ưu quy trình hành chính, nhân sự, chuỗi cung ứng thương mại điện tử và chăm sóc khách hàng. Khi ý tưởng qua vòng sơ loại, Ban Quản trị Quỹ LeadsGen sẽ cấp kỹ sư công nghệ và thiết kế nội bộ hỗ trợ bạn xây dựng sản phẩm từ A đến Z."
               },
               {
                 q: "Bản quyền sở hữu trí tuệ của ý tưởng sẽ thuộc về ai?",

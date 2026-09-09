@@ -19,7 +19,7 @@ public class EmailService {
     @Value("${app.leader.email:hoangthotudev@gmail.com}")
     private String leaderEmail;
 
-    @Value("${app.leader.name:Anh Tú}")
+    @Value("${app.leader.name:Ban Quản trị Quỹ}")
     private String leaderName;
 
     @Value("${spring.mail.username:noreply@leadsgen.com}")
