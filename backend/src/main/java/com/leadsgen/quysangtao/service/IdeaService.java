@@ -20,6 +20,7 @@ public class IdeaService {
     private final IdeaHistoryRepository ideaHistoryRepository;
     private final NotificationService notificationService;
     private final RabbitMQProducer rabbitMQProducer;
+    private final EmailService emailService;
 
     @Transactional
     public IdeaResponse createIdea(IdeaRequest request, User author) {
@@ -39,6 +40,9 @@ public class IdeaService {
         String dept = author != null ? author.getDepartment() : (request.getDepartment() != null ? request.getDepartment() : "Khối Công Khai");
         String submitterName = author != null ? author.getFullName() : (request.getSubmitterName() != null ? request.getSubmitterName() : "Thành viên LeadsGen");
         String submitterEmail = author != null ? author.getEmail() : request.getSubmitterEmail();
+        String submitterPhone = request.getSubmitterPhone();
+        String workingUnit = request.getWorkingUnit() != null ? request.getWorkingUnit() : "Tập đoàn LeadsGen";
+        String coauthorEmails = request.getCoauthorEmails();
 
         Idea idea = Idea.builder()
                 .title(request.getTitle())
@@ -57,6 +61,9 @@ public class IdeaService {
                 .author(author)
                 .submitterName(submitterName)
                 .submitterEmail(submitterEmail)
+                .submitterPhone(submitterPhone)
+                .workingUnit(workingUnit)
+                .coauthorEmails(coauthorEmails)
                 .department(dept)
                 .category(category)
                 .build();
@@ -72,6 +79,9 @@ public class IdeaService {
                 .note("Khởi tạo ý tưởng mới từ Cổng Landing Page")
                 .build();
         ideaHistoryRepository.save(history);
+
+        // Dispatch Email Notification to Leader Hà Mèo & CC Participants
+        emailService.sendNewIdeaNotification(saved);
 
         // RabbitMQ message
         rabbitMQProducer.sendStatusNotification("Ý tưởng mới '" + saved.getTitle() + "' đã được nộp bởi " + submitterName);
@@ -228,6 +238,9 @@ public class IdeaService {
                 .authorName(authorName)
                 .authorDepartment(authorDepartment)
                 .authorAvatar(authorAvatar)
+                .submitterPhone(idea.getSubmitterPhone())
+                .workingUnit(idea.getWorkingUnit())
+                .coauthorEmails(idea.getCoauthorEmails())
                 .categoryId(idea.getCategory() != null ? idea.getCategory().getId() : null)
                 .categoryName(idea.getCategory() != null ? idea.getCategory().getName() : "Khác")
                 .createdAt(idea.getCreatedAt())

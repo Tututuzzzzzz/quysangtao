@@ -39,13 +39,13 @@ const EFFORTS = [
 ];
 
 const KPI_TAGS = [
-  '⚡ Tối ưu quy trình & Năng suất',
-  '💰 Tiết kiệm chi phí & Ngân sách',
-  '🤖 Ứng dụng AI & Công nghệ mới',
-  '🌱 Môi trường làm việc xanh & Tiện ích',
-  '💖 Trải nghiệm Nhân sự & Gắn kết',
-  '🎯 Tăng doanh thu & Chuyển đổi Sales',
-  '🔒 An toàn thông tin & Bảo mật'
+  'Tối ưu quy trình & Năng suất',
+  'Tiết kiệm chi phí & Ngân sách',
+  'Ứng dụng AI & Công nghệ mới',
+  'Môi trường làm việc xanh & Tiện ích',
+  'Trải nghiệm Nhân sự & Gắn kết',
+  'Tăng doanh thu & Chuyển đổi Sales',
+  'An toàn thông tin & Bảo mật'
 ];
 
 export default function InteractiveIdeaForm() {
@@ -68,7 +68,7 @@ export default function InteractiveIdeaForm() {
     implementationEffort: 'MEDIUM',
     estimatedTimeframe: '1 tháng',
     requiredResources: '',
-    selectedKpis: ['⚡ Tối ưu quy trình & Năng suất'],
+    selectedKpis: ['Tối ưu quy trình & Năng suất'],
     files: []
   });
 

@@ -37,6 +37,9 @@ public class IdeaResponse {
     private String authorName;
     private String authorDepartment;
     private String authorAvatar;
+    private String submitterPhone;
+    private String workingUnit;
+    private String coauthorEmails;
 
     private Long categoryId;
     private String categoryName;

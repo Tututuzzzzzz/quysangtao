@@ -57,6 +57,10 @@ public class Idea {
 
     private String submitterName;        // Tên người nộp công khai
     private String submitterEmail;       // Email người nộp công khai
+    private String submitterPhone;       // Số điện thoại liên hệ
+    private String workingUnit;          // Đơn vị công tác / Chi nhánh
+    @Column(columnDefinition = "TEXT")
+    private String coauthorEmails;       // Danh sách email đồng tác giả (phân cách bằng dấu phẩy) để CC mail
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")

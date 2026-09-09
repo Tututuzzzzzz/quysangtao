@@ -223,34 +223,55 @@ export default function LandingPage() {
 
   // Idea Builder Multi-Step Wizard Controller
   const [wizardStep, setWizardStep] = useState(1);
+  
+  // Form Fields State
+  const [submitterName, setSubmitterName] = useState("");
+  const [submitterEmail, setSubmitterEmail] = useState("");
+  const [submitterPhone, setSubmitterPhone] = useState("");
+  const [department, setDepartment] = useState("Khối Công nghệ & Sản phẩm");
+  const [customDepartment, setCustomDepartment] = useState("");
+  const [workingUnit, setWorkingUnit] = useState("Trụ sở chính");
+  
   const [ideaTitle, setIdeaTitle] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Sản phẩm & Công nghệ");
   const [problemText, setProblemText] = useState("");
   const [solutionText, setSolutionText] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
+
+  // Co-authors for CC email list
   const [coauthors, setCoauthors] = useState([]);
-  const [coauthorInputValue, setCoauthorInputValue] = useState('');
+  const [coauthorNameInput, setCoauthorNameInput] = useState("");
+  const [coauthorEmailInput, setCoauthorEmailInput] = useState("");
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submittedCode, setSubmittedCode] = useState('');
 
   const stepLabels = {
-    1: "Bước 1/4: Khởi động (The Hook)",
-    2: "Bước 2/4: Đào sâu (The Core)",
-    3: "Bước 3/4: Bổ sung (Attachments & Team)",
-    4: "Bước 4/4: Review & Phóng tàu (Launch)",
-    5: "Hoàn tất: Đã ghi nhận sáng kiến!"
+    1: "Bước 1/5: Người đăng ký (Submitter Info)",
+    2: "Bước 2/5: Tên & Lĩnh vực ý tưởng (Idea Title & Category)",
+    3: "Bước 3/5: Vấn đề & Giải pháp (Core Solution)",
+    4: "Bước 4/5: Đồng tác giả CC & Đính kèm (Team & Media)",
+    5: "Bước 5/5: Xem lại & Gửi Leader Hà Mèo (Review & Launch)",
+    6: "Hoàn tất: Đã thông báo tới Leader Hà Mèo!"
   };
 
   const stepPercents = {
-    1: "25%",
-    2: "50%",
-    3: "75%",
-    4: "100%",
-    5: "100%"
+    1: "20%",
+    2: "40%",
+    3: "60%",
+    4: "80%",
+    5: "100%",
+    6: "100%"
   };
 
   const goToStep = (stepNumber) => {
     if (stepNumber > 1 && wizardStep === 1) {
+      if (!submitterName.trim() || !submitterEmail.trim() || !submitterPhone.trim()) {
+        alert('Vui lòng điền đầy đủ Họ tên, Email và Số điện thoại của người đăng ký!');
+        return;
+      }
+    }
+    if (stepNumber > 2 && wizardStep <= 2) {
       if (!ideaTitle.trim()) {
         alert('Vui lòng đặt tên cho ý tưởng của bạn!');
         return;
@@ -265,40 +286,51 @@ export default function LandingPage() {
   };
 
   // Co-author handlers
-  const removeCoauthor = (id) => {
-    setCoauthors(prev => prev.filter(c => c.id !== id));
+  const addCoauthor = () => {
+    if (!coauthorNameInput.trim() || !coauthorEmailInput.trim()) {
+      alert('Vui lòng nhập đầy đủ Họ tên và Email người cùng tham gia!');
+      return;
+    }
+    setCoauthors((prev) => [
+      ...prev,
+      {
+        id: Date.now().toString(),
+        name: coauthorNameInput.trim(),
+        email: coauthorEmailInput.trim()
+      }
+    ]);
+    setCoauthorNameInput('');
+    setCoauthorEmailInput('');
   };
 
-  const handleCoauthorKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      const val = coauthorInputValue.trim();
-      if (val) {
-        setCoauthors(prev => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            name: val,
-            initial: val.charAt(0).toUpperCase(),
-            color: 'bg-orange-500'
-          }
-        ]);
-        setCoauthorInputValue('');
-      }
-    }
+  const removeCoauthor = (id) => {
+    setCoauthors((prev) => prev.filter((c) => c.id !== id));
   };
 
   // Rich Text Mock Helper
   const handleMockFormat = (type) => {
-    if (type === 'B') setSolutionText(prev => prev + " **in đậm**");
-    else if (type === 'I') setSolutionText(prev => prev + " *in nghiêng*");
-    else if (type === 'list') setSolutionText(prev => prev + "\n- Ý 1\n- Ý 2");
-    else if (type === 'link') setSolutionText(prev => prev + " [liên kết](https://...)");
+    if (type === 'B') setSolutionText((prev) => prev + " **in đậm**");
+    else if (type === 'I') setSolutionText((prev) => prev + " *in nghiêng*");
+    else if (type === 'list') setSolutionText((prev) => prev + "\n- Ý 1\n- Ý 2");
+    else if (type === 'link') setSolutionText((prev) => prev + " [liên kết](https://...)");
   };
 
   // Submit idea handler
   const handleLaunchIdea = async () => {
+    if (!submitterName.trim() || !submitterEmail.trim()) {
+      alert("Vui lòng nhập thông tin Tên và Email người đăng ký!");
+      goToStep(1);
+      return;
+    }
+    if (!ideaTitle.trim()) {
+      alert("Vui lòng nhập tên ý tưởng!");
+      goToStep(2);
+      return;
+    }
+
     setIsSubmitting(true);
+    const finalDept = department === 'Khác' ? (customDepartment.trim() || 'Phòng ban khác') : department;
+    const coauthorEmailsList = coauthors.map((c) => c.email).filter(Boolean);
 
     try {
       await api.post('/ideas', {
@@ -307,19 +339,22 @@ export default function LandingPage() {
         problemDescription: problemText,
         proposedSolution: solutionText,
         expectedBenefit: "Tối ưu thời gian phê duyệt và nâng cao năng suất",
-        department: "Khối Công Khai",
-        submitterName: "Thành viên LeadsGen",
-        submitterEmail: "thanhvien@leadsgen.com"
+        department: finalDept,
+        submitterName: submitterName,
+        submitterEmail: submitterEmail,
+        submitterPhone: submitterPhone,
+        workingUnit: workingUnit,
+        coauthorEmails: coauthorEmailsList
       });
     } catch (err) {
       console.warn("Backend submit notice:", err);
     }
 
     setTimeout(() => {
-      const code = '#LEADSGEN-' + new Date().getFullYear() + '-' + Math.floor(100 + Math.random() * 900);
+      const code = '#LEADSGEN-' + new Date().getFullYear() + '-' + Math.floor(1000 + Math.random() * 9000);
       setSubmittedCode(code);
       setIsSubmitting(false);
-      setWizardStep(5);
+      setWizardStep(6);
       fireConfetti();
     }, 1000);
   };
@@ -463,15 +498,15 @@ export default function LandingPage() {
               <ul className="mt-4 space-y-2.5 text-sm text-slate-600">
                 <li className="flex items-start gap-2">
                   <span className="material-symbols-outlined text-orange-500 text-[18px] shrink-0 mt-0.5">check_circle</span>
-                  <span>Tài trợ vốn từ <strong class="text-slate-900 font-semibold">50.000.000đ – 200.000.000đ</strong> triển khai PoC.</span>
+                  <span>Tài trợ vốn từ <strong className="text-slate-900 font-semibold">50.000.000đ – 200.000.000đ</strong> triển khai PoC.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="material-symbols-outlined text-orange-500 text-[18px] shrink-0 mt-0.5">check_circle</span>
-                  <span>Thưởng nóng <strong class="text-orange-600 font-bold">5.000.000 VNĐ tiền mặt</strong> ngay khi vượt qua vòng sơ loại 48h.</span>
+                  <span>Thưởng nóng <strong className="text-orange-600 font-bold">5.000.000 VNĐ tiền mặt</strong> ngay khi vượt qua vòng sơ loại 48h.</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="material-symbols-outlined text-orange-500 text-[18px] shrink-0 mt-0.5">check_circle</span>
-                  <span>Fast-track bổ nhiệm <strong class="text-slate-900 font-semibold">Product Owner độc lập</strong>, tự chủ đội ngũ & ngân sách.</span>
+                  <span>Fast-track bổ nhiệm <strong className="text-slate-900 font-semibold">Product Owner độc lập</strong>, tự chủ đội ngũ & ngân sách.</span>
                 </li>
               </ul>
             </div>
@@ -545,15 +580,15 @@ export default function LandingPage() {
               <div className="mt-4 space-y-2.5 text-xs text-slate-600">
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold text-[10px] shrink-0">1</span>
-                  <span><strong className="text-slate-900">Nộp ý tưởng:</strong> Điền Idea Builder trực tuyến chỉ trong 2 phút.</span>
+                  <span><strong className="text-slate-900">Nộp ý tưởng:</strong> Điền Idea Builder trực tuyến gửi trực tiếp Leader Hà Mèo.</span>
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-sky-500 text-white font-bold text-[10px] shrink-0">2</span>
-                  <span><strong className="text-slate-900">Thẩm định 48h:</strong> Hội đồng LeadsGen phản hồi & giải ngân thưởng 5M.</span>
+                  <span><strong className="text-slate-900">Thẩm định 48h:</strong> Ban Quản trị Quỹ phản hồi & giải ngân thưởng 5M.</span>
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-amber-500 text-white font-bold text-[10px] shrink-0">3</span>
-                  <span><strong className="text-slate-900">Cấp vốn & PoC:</strong> Nhận vốn tới 200M và mentor từ Ban Giám đốc.</span>
+                  <span><strong className="text-slate-900">Cấp vốn & PoC:</strong> Nhận vốn tới 200M và cố vấn từ Leader Hà Mèo & C-Level.</span>
                 </div>
                 <div className="flex items-start gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="w-5 h-5 rounded-full bg-emerald-500 text-white font-bold text-[10px] shrink-0">4</span>
@@ -562,7 +597,7 @@ export default function LandingPage() {
               </div>
             </div>
             <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-amber-600 font-semibold font-label-md">
-              <span>Đồng hành cùng C-Level & Tech Lead LeadsGen</span>
+              <span>Đồng hành cùng Leader Hà Mèo & Tech Lead LeadsGen</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </div>
           </div>
@@ -637,8 +672,8 @@ export default function LandingPage() {
                       <span className="px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 text-xs font-label-sm font-semibold border border-sky-200">
                         {item.department || 'Phòng Ban LeadsGen'}
                       </span>
-                      <span className="px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-mono-metric font-bold border border-amber-200">
-                        🥇 Top #{item.rank || idx + 1}
+                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-mono-metric font-bold border border-amber-200">
+                        <span className="material-symbols-outlined text-[14px]">military_tech</span> Top #{item.rank || idx + 1}
                       </span>
                     </div>
                     <h4 className="font-headline-sm text-base font-bold text-slate-900 line-clamp-2">
@@ -664,7 +699,7 @@ export default function LandingPage() {
                       <span className="font-semibold text-slate-800">{item.fullName}</span>
                     </div>
                     <span className="px-2 py-0.5 rounded bg-orange-50 text-orange-700 font-mono-metric font-bold text-[11px] border border-orange-200">
-                      {(item.totalScore || 0).toLocaleString('vi-VN')} PTS
+                      {(item.totalScore || 0).toLocaleString('vi-VN')} Đóng góp
                     </span>
                   </div>
                 </div>
@@ -685,28 +720,28 @@ export default function LandingPage() {
           <div className="absolute -top-32 -right-32 w-80 h-80 bg-orange-200/30 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-32 -left-32 w-80 h-80 bg-sky-200/30 rounded-full blur-3xl pointer-events-none" />
 
-          {/* Wizard Top Indicator & Autosave Badge */}
+          {/* Wizard Top Indicator */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200 relative z-10">
             <div>
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-50 text-orange-700 font-label-sm text-xs font-semibold border border-orange-200">
                 <span className="material-symbols-outlined text-[16px]">rocket</span>
-                <span>LEADSGEN IDEA BUILDER • TRÌNH KHỞI TẠO Ý TƯỞNG</span>
+                <span>LEADSGEN IDEA BUILDER • BIỂU MẪU ĐÓNG GÓP SÁNG KIẾN</span>
               </div>
-              <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Biến suy nghĩ táo bạo thành hiện thực</h2>
+              <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Gửi trực tiếp tới Leader Hà Mèo</h2>
             </div>
             <div className="flex items-center gap-2 self-start sm:self-auto">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-label-sm text-xs">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Auto-save bật (Đã lưu nháp)</span>
+                <span>Hệ thống sẵn sàng</span>
               </span>
             </div>
           </div>
 
-          {/* Progress Bar (1/4 -> 4/4) */}
+          {/* Progress Bar */}
           <div className="mb-8 relative z-10">
             <div className="flex items-center justify-between text-xs font-label-md mb-2">
               <span className="font-bold text-orange-600 transition-all duration-300">
-                {stepLabels[wizardStep] || stepLabels[4]}
+                {stepLabels[wizardStep] || stepLabels[5]}
               </span>
               <span className="text-slate-500 font-mono-metric font-semibold transition-all duration-300">
                 {stepPercents[wizardStep] || "100%"} Hoàn thành
@@ -719,25 +754,26 @@ export default function LandingPage() {
               />
             </div>
 
-            {/* Step Dots Navigation Buttons */}
-            <div className="grid grid-cols-4 gap-2 mt-3 text-center">
+            {/* Step Navigation Dots */}
+            <div className="grid grid-cols-5 gap-1.5 mt-3 text-center">
               {[
-                { num: 1, label: 'Khởi động' },
-                { num: 2, label: 'Đào sâu' },
-                { num: 3, label: 'Bổ sung' },
-                { num: 4, label: 'Phóng tàu' }
+                { num: 1, label: 'Đăng ký' },
+                { num: 2, label: 'Ý tưởng' },
+                { num: 3, label: 'Giải pháp' },
+                { num: 4, label: 'Đồng tác giả' },
+                { num: 5, label: 'Gửi Leader' }
               ].map((s) => (
                 <button
                   key={s.num}
                   type="button"
                   onClick={() => goToStep(s.num)}
                   className={`flex flex-col items-center gap-1 group focus:outline-none ${
-                    wizardStep === 5 || s.num <= wizardStep ? 'opacity-100' : 'opacity-50'
+                    wizardStep === 6 || s.num <= wizardStep ? 'opacity-100' : 'opacity-50'
                   }`}
                 >
                   <div
                     className={`w-7 h-7 rounded-full font-bold text-xs flex items-center justify-center transition-all duration-300 group-hover:scale-110 ${
-                      wizardStep === 5 || s.num <= wizardStep
+                      wizardStep === 6 || s.num <= wizardStep
                         ? 'bg-orange-500 text-white shadow-md'
                         : 'bg-slate-200 text-slate-600'
                     }`}
@@ -746,7 +782,7 @@ export default function LandingPage() {
                   </div>
                   <span
                     className={`text-[11px] font-semibold hidden sm:inline transition-colors ${
-                      wizardStep === 5 || s.num <= wizardStep ? 'text-orange-600' : 'text-slate-600'
+                      wizardStep === 6 || s.num <= wizardStep ? 'text-orange-600' : 'text-slate-600'
                     }`}
                   >
                     {s.label}
@@ -757,43 +793,182 @@ export default function LandingPage() {
           </div>
 
           {/* WIZARD SLIDER TRACK */}
-          <div className="relative w-full overflow-hidden min-h-[480px]">
+          <div className="relative w-full overflow-hidden min-h-[460px]">
             <div
               className="wizard-slider-track"
-              style={{ transform: `translateX(${(wizardStep - 1) * -20}%)` }}
+              style={{ transform: `translateX(${(wizardStep - 1) * -16.666}%)` }}
             >
-              {/* SLIDE 1: BƯỚC 1: KHỞI ĐỘNG */}
+              {/* SLIDE 1: BƯỚC 1: THÔNG TIN NGƯỜI ĐĂNG KÝ */}
+              <div className="wizard-slide px-1">
+                <div className="space-y-5">
+                  <div className="border-b border-slate-100 pb-3">
+                    <h3 className="font-headline-md text-lg font-bold text-slate-900">
+                      Bước 1: Thông tin người đăng ký sáng kiến
+                    </h3>
+                    <p className="font-body-sm text-xs text-slate-500 mt-0.5">
+                      Nhập thông tin cá nhân/đại diện để Ban Quản trị Quỹ liên hệ và phản hồi kết quả sơ loại.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Full Name */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1" htmlFor="submitter-name">
+                        Họ và tên người đăng ký <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[18px]">person</span>
+                        <input
+                          id="submitter-name"
+                          type="text"
+                          value={submitterName}
+                          onChange={(e) => setSubmitterName(e.target.value)}
+                          placeholder="VD: Nguyễn Văn Anh"
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm font-medium"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1" htmlFor="submitter-email">
+                        Email liên hệ <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[18px]">mail</span>
+                        <input
+                          id="submitter-email"
+                          type="email"
+                          value={submitterEmail}
+                          onChange={(e) => setSubmitterEmail(e.target.value)}
+                          placeholder="VD: anh.nguyen@leadsgen.com"
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm font-medium"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1" htmlFor="submitter-phone">
+                        Số điện thoại liên hệ <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[18px]">call</span>
+                        <input
+                          id="submitter-phone"
+                          type="tel"
+                          value={submitterPhone}
+                          onChange={(e) => setSubmitterPhone(e.target.value)}
+                          placeholder="VD: 0987654321"
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm font-medium"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Department */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1" htmlFor="submitter-department">
+                        Phòng ban / Khối làm việc <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[18px]">domain</span>
+                        <select
+                          id="submitter-department"
+                          value={department}
+                          onChange={(e) => setDepartment(e.target.value)}
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm font-medium bg-white"
+                        >
+                          <option value="Khối Công nghệ & Sản phẩm">Khối Công nghệ & Sản phẩm</option>
+                          <option value="Khối Vận hành & Cung ứng">Khối Vận hành & Cung ứng</option>
+                          <option value="Khối Kinh doanh & Marketing">Khối Kinh doanh & Marketing</option>
+                          <option value="Khối Phân tích Dữ liệu">Khối Phân tích Dữ liệu</option>
+                          <option value="Khối Tài chính & Nhân sự">Khối Tài chính & Nhân sự</option>
+                          <option value="Khác">Khác (Nhập chi tiết bên dưới)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Write-in Department if "Khác" selected */}
+                  {department === 'Khác' && (
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1" htmlFor="custom-dept">
+                        Tên phòng ban / bộ phận cụ thể:
+                      </label>
+                      <input
+                        id="custom-dept"
+                        type="text"
+                        value={customDepartment}
+                        onChange={(e) => setCustomDepartment(e.target.value)}
+                        placeholder="Gõ tên phòng ban của bạn..."
+                        className="w-full p-2.5 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm font-medium"
+                      />
+                    </div>
+                  )}
+
+                  {/* Working Unit */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-800 mb-1" htmlFor="working-unit">
+                      Đơn vị công tác / Chi nhánh:
+                    </label>
+                    <div className="relative">
+                      <span className="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[18px]">location_city</span>
+                      <input
+                        id="working-unit"
+                        type="text"
+                        value={workingUnit}
+                        onChange={(e) => setWorkingUnit(e.target.value)}
+                        placeholder="VD: Trụ sở Hà Nội, Chi nhánh TP.HCM, LeadsGen Tech Hub..."
+                        className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm font-medium"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-4 border-t border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => goToStep(2)}
+                      className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all active:scale-95"
+                    >
+                      <span>Tiếp tục: Nhập ý tưởng</span>
+                      <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* SLIDE 2: BƯỚC 2: TÊN & LĨNH VỰC Ý TƯỞNG */}
               <div className="wizard-slide px-1">
                 <div className="space-y-6">
-                  <div className="text-center sm:py-2">
-                    <label className="block font-headline-md text-lg sm:text-xl font-bold text-slate-900 mb-2" htmlFor="input-idea-title">
-                      Đặt một cái tên thật kêu cho ý tưởng của bạn:
+                  <div>
+                    <label className="block font-headline-md text-base sm:text-lg font-bold text-slate-900 mb-2" htmlFor="input-idea-title">
+                      Tên gọi sáng kiến / ý tưởng đề xuất: <span className="text-red-500">*</span>
                     </label>
-                    <div className="relative max-w-2xl mx-auto">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-orange-500 text-[24px]">lightbulb</span>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-orange-500 text-[22px]">lightbulb</span>
                       <input
                         id="input-idea-title"
                         type="text"
                         value={ideaTitle}
                         onChange={(e) => setIdeaTitle(e.target.value)}
-                        placeholder="Đặt một cái tên thật kêu cho ý tưởng của bạn..."
-                        className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white border-2 border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 text-slate-900 text-base sm:text-lg font-semibold placeholder:text-slate-400 transition-all shadow-sm"
+                        placeholder="VD: Tự động hóa phê duyệt đơn từ bằng AI Assistant..."
+                        className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-white border-2 border-slate-200 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 text-slate-900 text-base font-semibold placeholder:text-slate-400 transition-all shadow-sm"
                       />
                     </div>
                   </div>
 
-                  {/* 6 Category Cards */}
+                  {/* 6 Category Cards (Professional Icons) */}
                   <div>
-                    <label className="block font-headline-sm text-sm font-bold text-slate-900 mb-1">Chọn Lĩnh vực phù hợp:</label>
-                    <p className="font-body-sm text-xs text-slate-500 mb-4">Hệ thống LeadsGen sẽ ghép cặp cố vấn chuyên môn tương ứng cho dự án của bạn.</p>
+                    <label className="block font-headline-sm text-sm font-bold text-slate-900 mb-1">Lĩnh vực trọng tâm:</label>
+                    <p className="font-body-sm text-xs text-slate-500 mb-4">Hệ thống sẽ điều phối Hội đồng chuyên môn thuộc mảng tương ứng tới thẩm định.</p>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {[
-                        { title: 'Cải tiến quy trình', icon: '⚙️', desc: 'Tối ưu Lean, giảm lãng phí thời gian, thủ tục' },
-                        { title: 'Sản phẩm & Công nghệ', icon: '💻', desc: 'GenAI, Automation, nền tảng số mới' },
-                        { title: 'Trải nghiệm nhân sự & Văn hóa', icon: '👥', desc: 'Gắn kết đội ngũ, đãi ngộ thông minh, wellness' },
-                        { title: 'Phát triển bền vững & Xanh', icon: '🌿', desc: 'Net Zero, tiết kiệm năng lượng, ESG văn phòng' },
-                        { title: 'Tăng trưởng doanh thu', icon: '📈', desc: 'Mô hình kinh doanh mới, kênh bán đột phá' },
-                        { title: 'An toàn & Bảo mật dữ liệu', icon: '🛡️', desc: 'Bảo vệ thông tin bí mật, an ninh phòng vệ' }
+                        { title: 'Cải tiến quy trình', icon: 'settings', desc: 'Tối ưu Lean, giảm lãng phí thời gian & thủ tục' },
+                        { title: 'Sản phẩm & Công nghệ', icon: 'memory', desc: 'GenAI, Automation, nền tảng công nghệ số' },
+                        { title: 'Trải nghiệm nhân sự & Văn hóa', icon: 'groups', desc: 'Gắn kết đội ngũ, đãi ngộ thông minh' },
+                        { title: 'Phát triển bền vững & Xanh', icon: 'eco', desc: 'Net Zero, tiết kiệm năng lượng, ESG' },
+                        { title: 'Tăng trưởng doanh thu', icon: 'trending_up', desc: 'Mô hình kinh doanh mới, kênh bán mới' },
+                        { title: 'An toàn & Bảo mật dữ liệu', icon: 'security', desc: 'Bảo vệ thông tin bí mật & an ninh phòng vệ' }
                       ].map((cat) => {
                         const isSelected = selectedCategory === cat.title;
                         return (
@@ -801,56 +976,66 @@ export default function LandingPage() {
                             key={cat.title}
                             type="button"
                             onClick={() => setSelectedCategory(cat.title)}
-                            className={`cat-card p-4 rounded-2xl text-left transition-all flex flex-col gap-2 relative group ${
+                            className={`cat-card p-3.5 rounded-2xl text-left transition-all flex flex-col gap-1.5 relative group ${
                               isSelected
-                                ? 'bg-orange-50/80 border-2 border-orange-500 shadow-sm ring-2 ring-orange-500/20'
+                                ? 'bg-orange-50/90 border-2 border-orange-500 shadow-sm ring-2 ring-orange-500/20'
                                 : 'bg-slate-50/70 border border-slate-200 hover:border-orange-400'
                             }`}
                           >
                             <div className="flex items-center justify-between">
-                              <span className="text-2xl">{cat.icon}</span>
-                              <span className={`material-symbols-outlined text-orange-600 text-[20px] ${isSelected ? 'block' : 'hidden'}`}>
+                              <span className={`material-symbols-outlined text-[24px] ${isSelected ? 'text-orange-600' : 'text-slate-600'}`}>
+                                {cat.icon}
+                              </span>
+                              <span className={`material-symbols-outlined text-orange-600 text-[18px] ${isSelected ? 'block' : 'hidden'}`}>
                                 check_circle
                               </span>
                             </div>
-                            <span className={`font-headline-sm text-sm font-bold ${isSelected ? 'text-orange-950' : 'text-slate-900'}`}>
+                            <span className={`font-headline-sm text-xs sm:text-sm font-bold ${isSelected ? 'text-orange-950' : 'text-slate-900'}`}>
                               {cat.title}
                             </span>
-                            <span className="font-body-sm text-xs text-slate-500">{cat.desc}</span>
+                            <span className="font-body-sm text-[11px] text-slate-500">{cat.desc}</span>
                           </button>
                         );
                       })}
                     </div>
                   </div>
 
-                  <div className="flex justify-end pt-4">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <button
                       type="button"
-                      onClick={() => goToStep(2)}
-                      className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 hover:scale-102 transition-all active:scale-95"
+                      onClick={() => goToStep(1)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-xs sm:text-sm font-semibold transition-all border border-slate-200 active:scale-95"
                     >
-                      <span>Tiếp tục: Đào sâu ý tưởng</span>
+                      <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+                      <span>Quay lại</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => goToStep(3)}
+                      className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all active:scale-95"
+                    >
+                      <span>Tiếp tục: Nội dung giải pháp</span>
                       <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* SLIDE 2: BƯỚC 2: ĐÀO SÂU */}
+              {/* SLIDE 3: BƯỚC 3: VẤN ĐỀ & GIẢI PHÁP */}
               <div className="wizard-slide px-1">
-                <div className="space-y-6">
+                <div className="space-y-5">
                   {/* Problem Question */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="font-headline-sm text-sm sm:text-base font-bold text-slate-900" htmlFor="input-problem">
-                        1. Ý tưởng này giải quyết nỗi đau/vấn đề gì hiện tại?
+                      <label className="font-headline-sm text-xs sm:text-sm font-bold text-slate-900" htmlFor="input-problem">
+                        1. Vấn đề / Nỗi đau thực tế cần khắc phục:
                       </label>
-                      <span className="text-xs font-mono-metric text-slate-500 font-semibold">
+                      <span className="text-[11px] font-mono-metric text-slate-500 font-semibold">
                         {problemText.length}/500
                       </span>
                     </div>
-                    <p className="font-body-sm text-xs text-slate-500 mb-2 italic">
-                      VD: Thời gian phê duyệt đơn từ mất 3 ngày, tài liệu lưu trữ phân tán khiến nhân viên mất 1.5h mỗi ngày tìm kiếm thông tin...
+                    <p className="font-body-sm text-[11px] text-slate-500 mb-2 italic">
+                      Mô tả thực trạng lãng phí thời gian, nguồn lực hoặc khó khăn trong công việc hiện tại...
                     </p>
                     <textarea
                       id="input-problem"
@@ -858,17 +1043,18 @@ export default function LandingPage() {
                       maxLength={500}
                       value={problemText}
                       onChange={(e) => setProblemText(e.target.value)}
-                      className="w-full p-4 rounded-2xl bg-white border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-slate-900 text-sm font-normal placeholder:text-slate-400 shadow-sm"
+                      placeholder="Mô tả cụ thể vấn đề hoặc điểm nghẽn hiện tại..."
+                      className="w-full p-3.5 rounded-2xl bg-white border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-slate-900 text-xs sm:text-sm font-normal placeholder:text-slate-400 shadow-sm"
                     />
                   </div>
 
-                  {/* Solution Question with Rich Text Bar */}
+                  {/* Solution Question */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <label className="font-headline-sm text-sm sm:text-base font-bold text-slate-900" htmlFor="input-solution">
-                        2. Cách thức hoạt động của ý tưởng này ra sao?
+                      <label className="font-headline-sm text-xs sm:text-sm font-bold text-slate-900" htmlFor="input-solution">
+                        2. Phương án thực thi & Giải pháp đề xuất:
                       </label>
-                      <span className="text-xs font-mono-metric text-slate-500 font-semibold">
+                      <span className="text-[11px] font-mono-metric text-slate-500 font-semibold">
                         {solutionText.length}/800
                       </span>
                     </div>
@@ -891,41 +1077,105 @@ export default function LandingPage() {
                       maxLength={800}
                       value={solutionText}
                       onChange={(e) => setSolutionText(e.target.value)}
-                      className="w-full p-4 rounded-b-2xl bg-white border-x border-b border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-slate-900 text-sm font-normal placeholder:text-slate-400 -mt-[1px] shadow-sm"
+                      placeholder="Trình bày các bước triển khai ý tưởng..."
+                      className="w-full p-3.5 rounded-b-2xl bg-white border-x border-b border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-slate-900 text-xs sm:text-sm font-normal placeholder:text-slate-400 -mt-[1px] shadow-sm"
                     />
                   </div>
 
-                  <div className="flex items-center justify-between pt-4">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <button
                       type="button"
-                      onClick={() => goToStep(1)}
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-sm font-semibold transition-all border border-slate-200 shadow-sm active:scale-95"
+                      onClick={() => goToStep(2)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-xs sm:text-sm font-semibold transition-all border border-slate-200 active:scale-95"
                     >
                       <span className="material-symbols-outlined text-[18px]">arrow_back</span>
                       <span>Quay lại</span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => goToStep(3)}
-                      className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 hover:scale-102 transition-all active:scale-95"
+                      onClick={() => goToStep(4)}
+                      className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all active:scale-95"
                     >
-                      <span>Tiếp tục: Bổ sung tài liệu</span>
+                      <span>Tiếp tục: Đồng tác giả & Đính kèm</span>
                       <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* SLIDE 3: BƯỚC 3: MỞ RỘNG */}
+              {/* SLIDE 4: BƯỚC 4: ĐỒNG TÁC GIẢ CC & FILE ĐÍNH KÈM */}
               <div className="wizard-slide px-1">
                 <div className="space-y-6">
-                  {/* File Drag & Drop Zone */}
+                  {/* Co-authors Email CC Section */}
                   <div>
-                    <label className="block font-headline-sm text-sm sm:text-base font-bold text-slate-900 mb-1">
-                      Đính kèm tài liệu phác thảo / Prototype (Tùy chọn):
+                    <label className="block font-headline-sm text-xs sm:text-sm font-bold text-slate-900 mb-1">
+                      Thành viên cùng tham gia (Email đồng gửi CC):
                     </label>
-                    <p className="font-body-sm text-xs text-slate-500 mb-3">Hỗ trợ định dạng PDF, PNG, JPG, Figma Link, PPTX (tối đa 25MB).</p>
-                    <label className="border-2 border-dashed border-orange-300 hover:border-orange-500 rounded-2xl p-6 text-center bg-orange-50/30 hover:bg-orange-50/60 transition-all cursor-pointer block relative">
+                    <p className="font-body-sm text-xs text-slate-500 mb-3">
+                      Nhập thông tin đồng nghiệp cùng thực hiện dự án. Email thông báo sẽ đồng gửi CC cho các thành viên này.
+                    </p>
+
+                    {/* Inputs to add co-author */}
+                    <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 mb-3">
+                      <input
+                        type="text"
+                        value={coauthorNameInput}
+                        onChange={(e) => setCoauthorNameInput(e.target.value)}
+                        placeholder="Họ tên thành viên..."
+                        className="sm:col-span-2 p-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:border-orange-500 outline-none"
+                      />
+                      <input
+                        type="email"
+                        value={coauthorEmailInput}
+                        onChange={(e) => setCoauthorEmailInput(e.target.value)}
+                        placeholder="Email (VD: nam.tran@leadsgen.com)..."
+                        className="sm:col-span-2 p-2.5 rounded-xl border border-slate-200 text-xs font-medium focus:border-orange-500 outline-none"
+                      />
+                      <button
+                        type="button"
+                        onClick={addCoauthor}
+                        className="p-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-colors flex items-center justify-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">add</span>
+                        <span>Thêm CC</span>
+                      </button>
+                    </div>
+
+                    {/* Added co-authors list */}
+                    {coauthors.length > 0 ? (
+                      <div className="space-y-2">
+                        {coauthors.map((c) => (
+                          <div key={c.id} className="flex items-center justify-between p-2.5 rounded-xl bg-orange-50/70 border border-orange-200 text-xs">
+                            <div className="flex items-center gap-2">
+                              <span className="material-symbols-outlined text-orange-600 text-[18px]">person</span>
+                              <span className="font-bold text-slate-900">{c.name}</span>
+                              <span className="text-slate-500">({c.email})</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => removeCoauthor(c.id)}
+                              className="text-slate-400 hover:text-red-600 transition-colors p-1"
+                              title="Xóa thành viên"
+                            >
+                              <span className="material-symbols-outlined text-[16px]">close</span>
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="p-3 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                        Chưa có đồng tác giả được thêm. Có thể bỏ qua nếu nộp cá nhân.
+                      </div>
+                    )}
+                  </div>
+
+                  {/* File Upload Section */}
+                  <div>
+                    <label className="block font-headline-sm text-xs sm:text-sm font-bold text-slate-900 mb-1">
+                      Đính kèm tài liệu phác thảo / Proposal (Tùy chọn):
+                    </label>
+                    <p className="font-body-sm text-xs text-slate-500 mb-3">Hỗ trợ PDF, PNG, JPG, PPTX, Figma link (tối đa 25MB).</p>
+                    <label className="border-2 border-dashed border-orange-300 hover:border-orange-500 rounded-2xl p-5 text-center bg-orange-50/20 hover:bg-orange-50/50 transition-all cursor-pointer block">
                       <input
                         type="file"
                         className="hidden"
@@ -935,152 +1185,130 @@ export default function LandingPage() {
                           }
                         }}
                       />
-                      <div className="flex flex-col items-center justify-center gap-2">
-                        <div className="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center">
-                          <span className="material-symbols-outlined text-[28px]">cloud_upload</span>
-                        </div>
-                        <span className="font-label-md text-sm text-slate-800 font-bold">
+                      <div className="flex flex-col items-center justify-center gap-1.5">
+                        <span className="material-symbols-outlined text-orange-500 text-[32px]">cloud_upload</span>
+                        <span className="font-label-md text-xs text-slate-800 font-bold">
                           Kéo thả tài liệu vào đây hoặc <span className="text-orange-600 underline">chọn tệp từ máy tính</span>
                         </span>
-                        <span className="text-xs text-slate-500">Tài liệu giúp hội đồng dễ hình dung mô hình triển khai của bạn hơn</span>
                       </div>
                     </label>
 
-                    {/* Uploaded file preview */}
                     {uploadedFile && (
-                      <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs">PDF</div>
-                          <div className="flex flex-col">
-                            <span className="font-label-md text-xs font-bold text-slate-900">{uploadedFile}</span>
-                            <span className="text-[11px] text-slate-500">1.4 MB • Đã sẵn sàng đính kèm</span>
-                          </div>
+                      <div className="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="material-symbols-outlined text-orange-600 text-[20px]">description</span>
+                          <span className="font-bold text-slate-800">{uploadedFile}</span>
                         </div>
                         <button
                           type="button"
                           onClick={() => setUploadedFile(null)}
-                          className="p-1 text-slate-400 hover:text-red-500 transition-colors"
-                          title="Gỡ file"
+                          className="text-slate-400 hover:text-red-500 transition-colors"
                         >
-                          <span className="material-symbols-outlined text-[20px]">delete</span>
+                          <span className="material-symbols-outlined text-[18px]">delete</span>
                         </button>
                       </div>
                     )}
                   </div>
 
-                  {/* Co-authors Autocomplete */}
-                  <div>
-                    <label className="block font-headline-sm text-sm sm:text-base font-bold text-slate-900 mb-1">
-                      Thành viên cùng phối hợp (Đồng tác giả):
-                    </label>
-                    <p className="font-body-sm text-xs text-slate-500 mb-3">Thêm đồng nghiệp LeadsGen cùng chia sẻ điểm KPI và tiền thưởng khi dự án thành công.</p>
-                    <div className="flex flex-wrap items-center gap-2 p-2 rounded-2xl bg-white border border-slate-200 shadow-sm">
-                      {coauthors.map((author) => (
-                        <div
-                          key={author.id}
-                          className="inline-flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full bg-orange-50 text-xs text-orange-950 border border-orange-200"
-                        >
-                          <div className={`w-6 h-6 rounded-full ${author.color} text-white font-bold text-[10px] flex items-center justify-center`}>
-                            {author.initial}
-                          </div>
-                          <span className="font-medium">{author.name}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeCoauthor(author.id)}
-                            className="text-slate-400 hover:text-slate-700 font-bold"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
-                      <input
-                        type="text"
-                        value={coauthorInputValue}
-                        onChange={(e) => setCoauthorInputValue(e.target.value)}
-                        onKeyDown={handleCoauthorKeyDown}
-                        placeholder="+ Gõ tên nhân sự và nhấn Enter..."
-                        className="bg-transparent border-none text-xs text-slate-800 placeholder:text-slate-400 focus:ring-0 px-2 py-1 flex-1 min-w-[150px] outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-4">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <button
                       type="button"
-                      onClick={() => goToStep(2)}
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-sm font-semibold transition-all border border-slate-200 shadow-sm active:scale-95"
+                      onClick={() => goToStep(3)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-xs sm:text-sm font-semibold transition-all border border-slate-200 active:scale-95"
                     >
                       <span className="material-symbols-outlined text-[18px]">arrow_back</span>
                       <span>Quay lại</span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => goToStep(4)}
-                      className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 hover:scale-102 transition-all active:scale-95"
+                      onClick={() => goToStep(5)}
+                      className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 text-white font-label-md font-bold shadow-md shadow-orange-500/25 hover:from-orange-600 hover:to-amber-600 transition-all active:scale-95"
                     >
-                      <span>Tiếp tục: Xem lại & Phóng tàu</span>
+                      <span>Tiếp tục: Xem lại & Gửi Leader Hà Mèo</span>
                       <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* SLIDE 4: BƯỚC 4: REVIEW & PHÓNG TÀU */}
+              {/* SLIDE 5: BƯỚC 5: XEM LẠI & GỬI LEADER HÀ MÈO */}
               <div className="wizard-slide px-1">
-                <div className="space-y-6">
-                  <div className="p-4 sm:p-6 rounded-2xl bg-white border border-orange-200 space-y-4 shadow-sm">
+                <div className="space-y-5">
+                  <div className="p-4 sm:p-5 rounded-2xl bg-white border border-orange-200 space-y-4 shadow-sm">
                     <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                      <span className="font-label-sm text-xs uppercase tracking-wider text-orange-600 font-bold">Hồ Sơ Đề Xuất Sáng Kiến LeadsGen</span>
-                      <button type="button" onClick={() => goToStep(1)} className="text-xs text-orange-600 underline hover:text-orange-700 font-semibold">Chỉnh sửa lại</button>
+                      <span className="font-label-sm text-xs uppercase tracking-wider text-orange-600 font-bold">
+                        Hồ Sơ Đề Xuất Sáng Kiến LeadsGen
+                      </span>
+                      <button type="button" onClick={() => goToStep(1)} className="text-xs text-orange-600 underline hover:text-orange-700 font-semibold">
+                        Chỉnh sửa
+                      </button>
                     </div>
 
-                    <div className="space-y-3 text-sm">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                       <div>
-                        <span className="text-xs text-slate-500 block">Tên sáng kiến:</span>
-                        <h3 className="font-headline-md text-lg font-bold text-slate-900">{ideaTitle || "Chưa đặt tên"}</h3>
+                        <span className="text-slate-400 block font-medium">Người đăng ký:</span>
+                        <span className="font-bold text-slate-900">{submitterName || "Chưa nhập"}</span>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                      <div>
+                        <span className="text-slate-400 block font-medium">Email liên hệ:</span>
+                        <span className="font-bold text-slate-900">{submitterEmail || "Chưa nhập"}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Số điện thoại:</span>
+                        <span className="font-bold text-slate-900">{submitterPhone || "Chưa nhập"}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Phòng ban & Chi nhánh:</span>
+                        <span className="font-bold text-slate-900">
+                          {department === 'Khác' ? customDepartment : department} ({workingUnit})
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="pt-3 border-t border-slate-100 space-y-2 text-xs">
+                      <div>
+                        <span className="text-slate-400 block font-medium">Tên sáng kiến:</span>
+                        <h4 className="font-headline-md text-base font-bold text-slate-900">{ideaTitle || "Chưa đặt tên"}</h4>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Lĩnh vực:</span>
+                        <span className="inline-block mt-0.5 px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 font-semibold border border-orange-200">
+                          {selectedCategory}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Vấn đề giải quyết:</span>
+                        <p className="text-slate-700 mt-0.5">{problemText || "(Chưa nhập)"}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block font-medium">Phương án thực thi:</span>
+                        <p className="text-slate-700 mt-0.5">{solutionText || "(Chưa nhập)"}</p>
+                      </div>
+                      {coauthors.length > 0 && (
                         <div>
-                          <span className="text-xs text-slate-500 block">Lĩnh vực:</span>
-                          <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-orange-50 text-orange-700 text-xs font-semibold border border-orange-200">
-                            {selectedCategory}
+                          <span className="text-slate-400 block font-medium">Đồng tác giả CC:</span>
+                          <span className="text-slate-800 font-medium">
+                            {coauthors.map((c) => `${c.name} (${c.email})`).join(', ')}
                           </span>
                         </div>
-                        <div>
-                          <span className="text-xs text-slate-500 block">Tác giả chính:</span>
-                          <span className="font-semibold text-slate-900 mt-1 block">
-                            {user?.fullName || 'Linh Nguyen'} ({user?.department || 'Product Lead'})
-                          </span>
-                        </div>
-                      </div>
-                      <div className="pt-2 border-t border-slate-100">
-                        <span className="text-xs text-slate-500 block">Vấn đề giải quyết:</span>
-                        <p className="text-xs text-slate-700 mt-0.5">{problemText || "(Chưa nhập)"}</p>
-                      </div>
-                      <div className="pt-2 border-t border-slate-100">
-                        <span className="text-xs text-slate-500 block">Phương án thực thi:</span>
-                        <p className="text-xs text-slate-700 mt-0.5">{solutionText || "(Chưa nhập)"}</p>
-                      </div>
+                      )}
                     </div>
                   </div>
 
-                  {/* Gamification Bonus Reminder */}
-                  <div className="p-3.5 rounded-xl bg-orange-50/80 border border-orange-200 flex items-center justify-between gap-3 shadow-sm">
-                    <div className="flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-orange-500 text-[24px]">redeem</span>
-                      <span className="text-xs text-slate-700 font-medium">
-                        Bấm kích hoạt sẽ cộng ngay <strong className="text-orange-600">+500 Điểm INNO</strong> vào tài khoản SSO LeadsGen của bạn.
-                      </span>
+                  {/* Leader Hà Mèo Email Notice Banner */}
+                  <div className="p-3.5 rounded-xl bg-orange-50 border border-orange-200 flex items-start gap-3 shadow-sm">
+                    <span className="material-symbols-outlined text-orange-600 text-[22px] shrink-0 mt-0.5">mail</span>
+                    <div className="text-xs text-slate-700 leading-relaxed">
+                      Thông tin sáng kiến sẽ được gửi trực tiếp tới email của <strong className="text-slate-900 font-bold">Leader Hà Mèo</strong> (<span className="text-orange-600 font-semibold">hameo.leader@leadsgen.com</span>) và đồng gửi CC cho các thành viên tham gia dự án.
                     </div>
-                    <span className="font-mono-metric text-xs font-bold text-orange-600 shrink-0">+500 PTS</span>
                   </div>
 
                   {/* Submit Buttons */}
-                  <div className="flex items-center justify-between pt-4">
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
                     <button
                       type="button"
-                      onClick={() => goToStep(3)}
-                      className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-sm font-semibold transition-all border border-slate-200 shadow-sm active:scale-95"
+                      onClick={() => goToStep(4)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-xs sm:text-sm font-semibold transition-all border border-slate-200 active:scale-95"
                     >
                       <span className="material-symbols-outlined text-[18px]">arrow_back</span>
                       <span>Quay lại</span>
@@ -1089,7 +1317,7 @@ export default function LandingPage() {
                       type="button"
                       disabled={isSubmitting}
                       onClick={handleLaunchIdea}
-                      className="relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white font-label-lg text-base font-bold shadow-lg shadow-orange-500/35 hover:shadow-xl hover:shadow-orange-500/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-70"
+                      className="relative inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 text-white font-label-lg text-sm sm:text-base font-bold shadow-lg shadow-orange-500/35 hover:shadow-xl hover:shadow-orange-500/40 hover:scale-105 active:scale-95 transition-all disabled:opacity-70"
                     >
                       {isSubmitting ? (
                         <>
@@ -1097,12 +1325,12 @@ export default function LandingPage() {
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                           </svg>
-                          <span>Đang kích hoạt...</span>
+                          <span>Đang gửi mail cho Leader Hà Mèo...</span>
                         </>
                       ) : (
                         <>
-                          <span className="material-symbols-outlined text-[22px]">rocket_launch</span>
-                          <span>🚀 Kích hoạt ý tưởng</span>
+                          <span className="material-symbols-outlined text-[20px]">send</span>
+                          <span>Gửi sáng kiến cho Leader Hà Mèo</span>
                         </>
                       )}
                     </button>
@@ -1110,50 +1338,56 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* SLIDE 5: SUCCESS STATE */}
+              {/* SLIDE 6: SUCCESS STATE */}
               <div className="wizard-slide px-1">
                 <div className="text-center py-6 sm:py-10 space-y-6">
-                  <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white shadow-lg shadow-orange-500/40 animate-bounce">
-                    <span className="material-symbols-outlined text-[48px]">check_circle</span>
+                  <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 flex items-center justify-center text-white shadow-lg shadow-orange-500/40 animate-bounce">
+                    <span className="material-symbols-outlined text-[44px]">check_circle</span>
                   </div>
                   <div className="space-y-2 max-w-lg mx-auto">
                     <span className="px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-mono-metric font-bold uppercase tracking-wider border border-orange-200">
                       Mã Hồ Sơ: {submittedCode}
                     </span>
                     <h3 className="font-headline-lg text-2xl sm:text-3xl font-bold text-slate-900">
-                      Tuyệt vời! Ý tưởng của bạn đã được ghi nhận.
+                      Tuyệt vời! Ý tưởng của bạn đã được gửi thành công.
                     </h3>
-                    <p className="font-body-md text-sm text-slate-600">
-                      Hội đồng LeadsGen sẽ phản hồi trong vòng <strong className="text-sky-600">48 giờ làm việc</strong>. Bạn vừa được cộng <strong className="text-orange-600">+500 INNO Points</strong> vào ví tài khoản.
+                    <p className="font-body-md text-sm text-slate-600 leading-relaxed">
+                      Email thông báo đã được gửi trực tiếp tới <strong className="text-slate-900">Leader Hà Mèo</strong> (hameo.leader@leadsgen.com) và các đồng tác giả. Ban Quản trị Quỹ sẽ phản hồi tới email của bạn trong vòng <strong className="text-sky-600">48 giờ làm việc</strong>.
                     </p>
                   </div>
                   <div className="p-4 max-w-md mx-auto rounded-2xl bg-white border border-slate-200 flex items-center justify-around text-xs shadow-sm">
                     <div className="flex flex-col items-center">
                       <span className="material-symbols-outlined text-orange-500 text-[22px]">verified</span>
-                      <span className="text-slate-800 mt-1 font-semibold">Đã nộp</span>
+                      <span className="text-slate-800 mt-1 font-semibold">Đã gửi mail</span>
                     </div>
                     <div className="flex flex-col items-center">
                       <span className="material-symbols-outlined text-amber-500 text-[22px]">timer</span>
                       <span className="text-slate-800 mt-1 font-semibold">Sơ duyệt 48h</span>
                     </div>
                     <div className="flex flex-col items-center">
-                      <span className="material-symbols-outlined text-sky-600 text-[22px]">card_giftcard</span>
-                      <span className="text-slate-800 mt-1 font-semibold">Thưởng 5M</span>
+                      <span className="material-symbols-outlined text-sky-600 text-[22px]">payments</span>
+                      <span className="text-slate-800 mt-1 font-semibold">Thưởng nóng 5M</span>
                     </div>
                   </div>
                   <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
                     <button
                       type="button"
-                      onClick={() => goToStep(1)}
+                      onClick={() => {
+                        setIdeaTitle('');
+                        setProblemText('');
+                        setSolutionText('');
+                        setCoauthors([]);
+                        goToStep(1);
+                      }}
                       className="px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-label-md text-xs sm:text-sm font-semibold transition-all shadow-md shadow-orange-500/25 active:scale-95"
                     >
-                      Tạo ý tưởng mới
+                      Gửi ý tưởng mới
                     </button>
                     <a
                       href="#leaderboard"
                       className="px-6 py-3 rounded-xl bg-white hover:bg-slate-100 text-slate-700 font-label-md text-xs sm:text-sm font-semibold transition-all border border-slate-200 shadow-sm"
                     >
-                      Xem hồ sơ ý tưởng & Bảng vàng
+                      Xem Bảng vàng vinh danh
                     </a>
                   </div>
                 </div>
@@ -1172,7 +1406,7 @@ export default function LandingPage() {
               Câu Hỏi Thường Gặp
             </h2>
             <p className="font-body-md text-slate-600 text-sm mt-1">
-              Mọi thông tin về quyền tác giả, bảo mật và cơ chế tài trợ nội bộ LeadsGen.
+              Mọi thông tin về quyền tác giả, thẩm định và cơ chế tài trợ nội bộ LeadsGen.
             </p>
           </div>
 
@@ -1180,19 +1414,19 @@ export default function LandingPage() {
             {[
               {
                 q: "Tôi làm khối Vận hành / Nhân sự và không biết lập trình thì có tham gia được không?",
-                a: "Hoàn toàn được và rất được khuyến khích! Hơn 40% các sáng kiến thành công nhất đến từ tối ưu quy trình hành chính, nhân sự, chuỗi cung ứng thương mại điện tử và chăm sóc khách hàng. Khi ý tưởng qua vòng sơ loại, Quỹ LeadsGen sẽ cấp kỹ sư công nghệ và thiết kế nội bộ hỗ trợ bạn xây dựng sản phẩm từ A đến Z."
+                a: "Hoàn toàn được và rất được khuyến khích! Hơn 40% các sáng kiến thành công nhất đến từ tối ưu quy trình hành chính, nhân sự, chuỗi cung ứng thương mại điện tử và chăm sóc khách hàng. Khi ý tưởng qua vòng sơ loại, Leader Hà Mèo và Quỹ LeadsGen sẽ cấp kỹ sư công nghệ và thiết kế nội bộ hỗ trợ bạn xây dựng sản phẩm từ A đến Z."
               },
               {
                 q: "Bản quyền sở hữu trí tuệ của ý tưởng sẽ thuộc về ai?",
                 a: "Ý tưởng phát triển bằng nguồn lực LeadsGen sẽ thuộc quyền sở hữu của tập đoàn. Tuy nhiên, tác giả và các cộng sự được vinh danh vĩnh viễn là Tác Giả Sáng Chế (Inventor), nhận thưởng nóng 5.000.000 VNĐ, nhận % phân chia doanh thu thương mại hóa và ưu tiên giữ vai trò Product Owner của dự án."
               },
               {
-                q: "Nếu thử nghiệm PoC thất bại thì có bị trừ KPI hay khiển trách không?",
-                a: "Tuyệt đối không! Quỹ Đổi mới LeadsGen vận hành theo văn hóa Zero-Blame Culture (Văn hóa không đổ lỗi). Thất bại sớm trong giai đoạn thử nghiệm là bài học vô giá. Toàn bộ nỗ lực đề xuất và thử nghiệm đều được cộng điểm INNO Points và ghi nhận đóng góp tích cực trong kỳ đánh giá nhân sự."
+                q: "Nếu thử nghiệm PoC thất bại thì có bị ảnh hưởng đến đánh giá công việc không?",
+                a: "Tuyệt đối không! Quỹ Đổi mới LeadsGen vận hành theo văn hóa Zero-Blame Culture (Văn hóa không đổ lỗi). Thất bại sớm trong giai đoạn thử nghiệm là bài học vô giá. Toàn bộ nỗ lực đề xuất và thử nghiệm đều được ghi nhận đóng góp tích cực trong kỳ đánh giá nhân sự."
               },
               {
-                q: "Tôi có thể tìm kiếm người đồng hành (Co-author) ở phòng ban khác như thế nào?",
-                a: "Ngay trong Bước 3 của Idea Builder, bạn có thể gõ tìm kiếm bất kỳ đồng nghiệp nào trong danh bạ nội bộ LeadsGen. Ngoài ra, Quỹ có kênh Slack/Teams nội bộ #leadsgen-matchmaking để các bạn pitch ý tưởng và tìm kiếm mảnh ghép kỹ thuật còn thiếu."
+                q: "Tôi muốn thêm các đồng nghiệp khác đồng nhận thông tin mail thì làm như thế nào?",
+                a: "Ngay tại Bước 4 của Idea Builder, bạn có thể điền Tên và Email của các đồng tác giả. Hệ thống sẽ tự động đồng gửi CC thông báo cho tất cả các thành viên khi bạn bấm gửi cho Leader Hà Mèo."
               }
             ].map((faq, idx) => {
               const isOpen = openFaq === idx;

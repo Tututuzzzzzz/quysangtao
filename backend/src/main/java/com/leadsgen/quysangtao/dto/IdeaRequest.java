@@ -31,5 +31,8 @@ public class IdeaRequest {
 
     private String submitterName;
     private String submitterEmail;
+    private String submitterPhone;
     private String department;
+    private String workingUnit;
+    private String coauthorEmails;
 }
