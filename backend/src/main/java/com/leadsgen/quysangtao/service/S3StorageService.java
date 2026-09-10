@@ -46,7 +46,7 @@ public class S3StorageService {
 
         try {
             if (accessKey == null || accessKey.trim().isEmpty() || secretKey == null || secretKey.trim().isEmpty()) {
-                log.warn("AWS S3 credentials (access-key / secret-key) không được cấu hình. Chuyển sang lưu trữ cục bộ.");
+                log.warn("AWS S3 credentials (AWS_ACCESS_KEY / AWS_SECRET_KEY) không tìm thấy trong môi trường. Chuyển sang lưu trữ cục bộ.");
                 return saveLocalFallback(file, cleanFilename);
             }
 

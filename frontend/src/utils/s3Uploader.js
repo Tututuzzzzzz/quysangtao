@@ -1,27 +1,33 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
-const ak = ["AKIAVGAH", "FBN7RDTB4RF7"].join("");
-const sk = ["fM7Fa9CoNXabqfulHa1", "CT5kfuvR2ZpUyqLm5j/Ia"].join("");
-
-const s3Client = new S3Client({
-  region: "ap-southeast-1",
-  credentials: {
-    accessKeyId: import.meta.env.VITE_AWS_ACCESS_KEY || ak,
-    secretAccessKey: import.meta.env.VITE_AWS_SECRET_KEY || sk,
-  },
-});
+const accessKey = import.meta.env.VITE_AWS_ACCESS_KEY;
+const secretKey = import.meta.env.VITE_AWS_SECRET_KEY;
+const bucket = import.meta.env.VITE_AWS_BUCKET || "30usdv2-cdn";
+const region = import.meta.env.VITE_AWS_REGION || "ap-southeast-1";
+const cloudFrontHost = import.meta.env.VITE_AWS_CLOUDFRONT_HOST || "https://dg86kmop4ajn0.cloudfront.net";
 
 export async function uploadFileToS3(file) {
-  if (!file) return null;
+  if (!file || !accessKey || !secretKey) {
+    console.warn("AWS S3 credentials not found in frontend environment variables.");
+    return null;
+  }
 
   try {
+    const s3Client = new S3Client({
+      region,
+      credentials: {
+        accessKeyId: accessKey.trim(),
+        secretAccessKey: secretKey.trim(),
+      },
+    });
+
     const cleanFilename = file.name ? file.name.replace(/[^a-zA-Z0-9._-]/g, "_") : "file";
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 8);
     const key = `uploads/${timestamp}_${randomStr}_${cleanFilename}`;
 
     const command = new PutObjectCommand({
-      Bucket: "30usdv2-cdn",
+      Bucket: bucket,
       Key: key,
       Body: file,
       ContentType: file.type || "application/octet-stream",
@@ -29,11 +35,12 @@ export async function uploadFileToS3(file) {
 
     await s3Client.send(command);
 
-    const cdnUrl = `https://dg86kmop4ajn0.cloudfront.net/${key}`;
-    console.log("Uploaded file directly to AWS S3 & CloudFront CDN:", cdnUrl);
+    const baseUrl = cloudFrontHost.replace(/\/$/, "");
+    const cdnUrl = `${baseUrl}/${key}`;
+    console.log("Successfully uploaded file directly to AWS S3 & CloudFront CDN:", cdnUrl);
     return cdnUrl;
   } catch (err) {
-    console.warn("Direct S3 upload notice:", err);
+    console.warn("Direct browser S3 upload notice:", err);
     return null;
   }
 }
@@ -53,7 +60,8 @@ export async function getAttachmentCloudFrontUrl(file, api) {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     if (uploadRes.data && uploadRes.data.url) {
-      return uploadRes.data.url;
+      const url = uploadRes.data.url;
+      return url.startsWith('http') ? url : `https://quysangtao-backend.onrender.com${url}`;
     }
   } catch (err) {
     console.warn("Backend upload notice:", err);
