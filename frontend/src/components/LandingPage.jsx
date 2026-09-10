@@ -529,20 +529,20 @@ export default function LandingPage() {
 
   return (
     <div className="w-full relative bg-slate-50 text-slate-900">
-      {/* FLOATING CENTER-SCREEN POPUP WARNING MODAL */}
+      {/* FLOATING CENTER-SCREEN POPUP WARNING MODAL (Soft & Gentle Theme) */}
       {errorMessage && (
-        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 font-sans animate-fade-in">
-          <div className="bg-slate-900 text-white w-full max-w-md p-6 rounded-3xl border-2 border-red-500 shadow-2xl shadow-red-500/50 relative flex flex-col gap-4 animate-scale-up">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 font-sans animate-fade-in">
+          <div className="bg-white text-slate-800 w-full max-w-md p-6 rounded-3xl border border-orange-200/80 shadow-2xl shadow-slate-900/15 relative flex flex-col gap-4 animate-scale-up">
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-start gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-red-500/20 text-red-400 border border-red-500/40 flex items-center justify-center text-2xl shrink-0 animate-pulse">
-                  🚨
+                <div className="w-10 h-10 rounded-2xl bg-orange-50 text-orange-600 border border-orange-200/60 flex items-center justify-center text-xl shrink-0">
+                  ⚠️
                 </div>
                 <div>
-                  <h4 className="font-extrabold text-sm text-red-400 uppercase tracking-wider">
-                    Cảnh báo nhập liệu
+                  <h4 className="font-bold text-xs text-orange-600 uppercase tracking-wider">
+                    Lưu ý nhập liệu
                   </h4>
-                  <p className="text-xs text-slate-200 font-semibold leading-relaxed mt-1">
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed mt-1">
                     {errorMessage}
                   </p>
                 </div>
@@ -550,13 +550,13 @@ export default function LandingPage() {
               <button
                 type="button"
                 onClick={() => setErrorMessage("")}
-                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-red-500/30 text-slate-400 hover:text-white flex items-center justify-center font-bold text-sm transition-colors shrink-0"
+                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-400 hover:text-slate-700 flex items-center justify-center font-bold text-xs transition-colors shrink-0"
               >
                 ✕
               </button>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => {
@@ -564,9 +564,9 @@ export default function LandingPage() {
                   const builder = document.getElementById('idea-builder');
                   if (builder) builder.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
-                className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-bold text-xs shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 active:scale-95"
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
               >
-                <span>Đã hiểu & Sửa ngay</span>
+                <span>Đã hiểu & Sửa thông tin</span>
                 <span>→</span>
               </button>
             </div>
