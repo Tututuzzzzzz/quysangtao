@@ -44,6 +44,9 @@ public class IdeaResponse {
     private Long categoryId;
     private String categoryName;
 
+    private String attachmentUrl;
+    private String attachmentName;
+
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -203,11 +203,18 @@ export default function KanbanBoard() {
                                     <span className="truncate max-w-[85px]">{idea.authorName}</span>
                                   </div>
 
-                                  {idea.estimatedSavings > 0 && (
-                                    <span className="font-black text-emerald-600 font-mono">
-                                      {Number(idea.estimatedSavings).toLocaleString('vi-VN')} đ
-                                    </span>
-                                  )}
+                                  <div className="flex items-center space-x-2">
+                                    {idea.attachmentUrl && (
+                                      <span title="Có tệp đính kèm" className="text-orange-500 font-bold">
+                                        📎
+                                      </span>
+                                    )}
+                                    {idea.estimatedSavings > 0 && (
+                                      <span className="font-black text-emerald-600 font-mono">
+                                        {Number(idea.estimatedSavings).toLocaleString('vi-VN')} đ
+                                      </span>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             )}

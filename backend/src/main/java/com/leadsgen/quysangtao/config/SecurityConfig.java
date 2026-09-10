@@ -72,6 +72,8 @@ public class SecurityConfig {
                 auth.requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/ideas").permitAll()
                     .requestMatchers("/api/ideas/**").permitAll()
+                    .requestMatchers("/api/upload").permitAll()
+                    .requestMatchers("/uploads/**").permitAll()
                     .requestMatchers("/api/categories").permitAll()
                     .requestMatchers("/api/analytics/**").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()

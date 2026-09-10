@@ -440,6 +440,25 @@ export default function LandingPage() {
     const finalDept = department === 'Khác' ? (customDepartment.trim() || 'Phòng ban khác') : department;
     const coauthorEmailsList = coauthors.map((c) => c.email).filter(Boolean);
 
+    let backendAttachmentUrl = null;
+    let backendAttachmentName = null;
+
+    if (uploadedFile) {
+      try {
+        const fileFormData = new FormData();
+        fileFormData.append("file", uploadedFile);
+        const uploadRes = await api.post('/upload', fileFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        if (uploadRes.data && uploadRes.data.url) {
+          backendAttachmentUrl = uploadRes.data.url;
+          backendAttachmentName = uploadRes.data.name || uploadedFile.name;
+        }
+      } catch (err) {
+        console.warn("Backend file upload warning:", err);
+      }
+    }
+
     const ideaData = {
       title: ideaTitle,
       categoryId: 1,
@@ -451,7 +470,9 @@ export default function LandingPage() {
       submitterEmail: submitterEmail,
       submitterPhone: submitterPhone,
       workingUnit: workingUnit,
-      coauthorEmails: coauthorEmailsList.join(',')
+      coauthorEmails: coauthorEmailsList.join(','),
+      attachmentUrl: backendAttachmentUrl,
+      attachmentName: backendAttachmentName
     };
 
     const formData = new FormData();

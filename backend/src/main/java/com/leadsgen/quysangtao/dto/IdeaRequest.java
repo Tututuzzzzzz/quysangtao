@@ -44,4 +44,6 @@ public class IdeaRequest {
     private String department;
     private String workingUnit;
     private String coauthorEmails;
+    private String attachmentUrl;
+    private String attachmentName;
 }

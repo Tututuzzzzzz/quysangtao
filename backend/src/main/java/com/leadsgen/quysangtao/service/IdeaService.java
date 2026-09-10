@@ -64,6 +64,8 @@ public class IdeaService {
                 .submitterPhone(submitterPhone)
                 .workingUnit(workingUnit)
                 .coauthorEmails(coauthorEmails)
+                .attachmentUrl(request.getAttachmentUrl())
+                .attachmentName(request.getAttachmentName())
                 .department(dept)
                 .category(category)
                 .build();
@@ -243,6 +245,8 @@ public class IdeaService {
                 .coauthorEmails(idea.getCoauthorEmails())
                 .categoryId(idea.getCategory() != null ? idea.getCategory().getId() : null)
                 .categoryName(idea.getCategory() != null ? idea.getCategory().getName() : "Khác")
+                .attachmentUrl(idea.getAttachmentUrl())
+                .attachmentName(idea.getAttachmentName())
                 .createdAt(idea.getCreatedAt())
                 .updatedAt(idea.getUpdatedAt())
                 .build();

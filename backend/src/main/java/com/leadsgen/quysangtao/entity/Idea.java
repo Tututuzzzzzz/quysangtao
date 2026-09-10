@@ -62,6 +62,9 @@ public class Idea {
     @Column(columnDefinition = "TEXT")
     private String coauthorEmails;       // Danh sách email đồng tác giả (phân cách bằng dấu phẩy) để CC mail
 
+    private String attachmentUrl;        // Đường dẫn file/ảnh đính kèm
+    private String attachmentName;       // Tên hiển thị của file/ảnh đính kèm
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id")
     private Category category;

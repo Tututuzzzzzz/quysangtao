@@ -152,6 +152,29 @@ export default function IdeaEvaluationModal({ idea, onClose, onSave }) {
           </div>
         </div>
 
+        {/* Attachment section if present */}
+        {idea.attachmentUrl && (
+          <div className="bg-orange-50/70 p-4 rounded-2xl border border-orange-200 flex items-center justify-between text-xs">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-base">
+                📄
+              </div>
+              <div>
+                <span className="font-extrabold text-slate-800 block">{idea.attachmentName || "Tài liệu đính kèm"}</span>
+                <span className="text-[11px] text-slate-500">Tệp đính kèm phác thảo proposal / hình ảnh</span>
+              </div>
+            </div>
+            <a
+              href={idea.attachmentUrl.startsWith('http') ? idea.attachmentUrl : `${api.defaults.baseURL.replace(/\/api\/?$/, '')}${idea.attachmentUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-colors flex items-center space-x-1 shadow-xs"
+            >
+              <span>Xem / Tải file</span>
+            </a>
+          </div>
+        )}
+
         {/* Tagging & Scoring Section */}
         <div className="bg-blue-50/60 rounded-2xl p-5 border border-blue-100 space-y-4">
           <div className="flex items-center space-x-2 text-[#0052FF] font-bold text-sm">
