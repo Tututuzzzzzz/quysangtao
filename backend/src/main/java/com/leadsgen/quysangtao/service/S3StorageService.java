@@ -39,20 +39,45 @@ public class S3StorageService {
 
     private static final String LOCAL_UPLOAD_DIR = "uploads";
 
+    private String getEffectiveAccessKey() {
+        if (accessKey != null && !accessKey.trim().isEmpty()) return accessKey.trim();
+        String env1 = System.getenv("AWS_S3_ACCESS_KEY");
+        if (env1 != null && !env1.trim().isEmpty()) return env1.trim();
+        String env2 = System.getenv("AWS_ACCESS_KEY");
+        if (env2 != null && !env2.trim().isEmpty()) return env2.trim();
+        String env3 = System.getenv("AWS_ACCESS_KEY_ID");
+        if (env3 != null && !env3.trim().isEmpty()) return env3.trim();
+        return "";
+    }
+
+    private String getEffectiveSecretKey() {
+        if (secretKey != null && !secretKey.trim().isEmpty()) return secretKey.trim();
+        String env1 = System.getenv("AWS_S3_SECRET_KEY");
+        if (env1 != null && !env1.trim().isEmpty()) return env1.trim();
+        String env2 = System.getenv("AWS_SECRET_KEY");
+        if (env2 != null && !env2.trim().isEmpty()) return env2.trim();
+        String env3 = System.getenv("AWS_SECRET_ACCESS_KEY");
+        if (env3 != null && !env3.trim().isEmpty()) return env3.trim();
+        return "";
+    }
+
     public String uploadFile(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         String cleanFilename = originalFilename != null ? originalFilename.replaceAll("[^a-zA-Z0-9._-]", "_") : "file";
         String s3Key = "quysangtao/" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 6) + "_" + cleanFilename;
 
+        String effectiveAccessKey = getEffectiveAccessKey();
+        String effectiveSecretKey = getEffectiveSecretKey();
+
         try {
-            if (accessKey == null || accessKey.trim().isEmpty() || secretKey == null || secretKey.trim().isEmpty()) {
-                log.warn("AWS S3 credentials (AWS_ACCESS_KEY / AWS_SECRET_KEY) không tìm thấy trong môi trường. Chuyển sang lưu trữ cục bộ.");
+            if (effectiveAccessKey.isEmpty() || effectiveSecretKey.isEmpty()) {
+                log.warn("AWS S3 credentials (AWS_S3_ACCESS_KEY / AWS_S3_SECRET_KEY) không tìm thấy trong môi trường. Chuyển sang lưu trữ cục bộ.");
                 return saveLocalFallback(file, cleanFilename);
             }
 
             log.info("Uploading file to AWS S3 bucket: {} with key: {}", bucketName, s3Key);
 
-            AwsBasicCredentials credentials = AwsBasicCredentials.create(accessKey.trim(), secretKey.trim());
+            AwsBasicCredentials credentials = AwsBasicCredentials.create(effectiveAccessKey, effectiveSecretKey);
             S3Client s3Client = S3Client.builder()
                     .region(Region.of(region))
                     .credentialsProvider(StaticCredentialsProvider.create(credentials))
@@ -71,7 +96,7 @@ public class S3StorageService {
             log.info("Successfully uploaded to AWS S3 / CloudFront URL: {}", fullCloudFrontUrl);
             return fullCloudFrontUrl;
         } catch (Exception e) {
-            log.error("AWS S3 Upload failed, switching to local storage fallback: {}", e.getMessage());
+            log.error("AWS S3 Upload failed, switching to local storage fallback: {}", e.getMessage(), e);
             return saveLocalFallback(file, cleanFilename);
         }
     }

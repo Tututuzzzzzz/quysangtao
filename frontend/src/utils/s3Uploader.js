@@ -7,7 +7,6 @@ const cloudFrontHost = import.meta.env.VITE_AWS_CLOUDFRONT_HOST || "https://dg86
 export async function getAttachmentCloudFrontUrl(file, api) {
   if (!file) return null;
 
-  // 1. Send file to Backend API (/upload) -> Backend S3 Storage Service handles S3 upload
   try {
     const fileFormData = new FormData();
     fileFormData.append("file", file);
@@ -18,14 +17,13 @@ export async function getAttachmentCloudFrontUrl(file, api) {
       const url = uploadRes.data.url;
       if (url.startsWith('http')) {
         return url;
+      } else if (url.startsWith('/')) {
+        return `https://quysangtao-backend.onrender.com${url}`;
       }
     }
   } catch (err) {
     console.warn("Backend S3 upload notice:", err);
   }
 
-  // 2. Fallback CloudFront CDN URL format under quysangtao/ prefix
-  const cleanName = file.name ? file.name.replace(/[^a-zA-Z0-9._-]/g, "_") : "file";
-  const baseUrl = cloudFrontHost.replace(/\/$/, "");
-  return `${baseUrl}/quysangtao/${Date.now()}_${cleanName}`;
+  return null;
 }
