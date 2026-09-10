@@ -454,24 +454,27 @@ export default function LandingPage() {
       coauthorEmails: coauthorEmailsList.join(',')
     };
 
-    const emailPayload = {
-      _subject: `[Quỹ Sáng Tạo LeadsGen] Đề xuất sáng kiến mới: ${ideaTitle}`,
-      _template: "table",
-      _captcha: "false",
-      "1. Họ tên người đăng ký": submitterName,
-      "2. Email liên hệ": submitterEmail,
-      "3. Số điện thoại": submitterPhone,
-      "4. Phòng ban công tác": finalDept,
-      "5. Đơn vị / Chi nhánh": workingUnit,
-      "6. Tên sáng kiến": ideaTitle,
-      "7. Lĩnh vực trọng tâm": selectedCategory,
-      "8. Vấn đề giải quyết": problemText || "(Chưa nhập)",
-      "9. Phương án thực thi": solutionText || "(Chưa nhập)",
-      "10. Đồng tác giả CC": coauthorEmailsList.join(', ') || "Nộp cá nhân"
-    };
+    const formData = new FormData();
+    formData.append("_subject", `[Quỹ Sáng Tạo LeadsGen] Đề xuất sáng kiến mới: ${ideaTitle}`);
+    formData.append("_template", "table");
+    formData.append("_captcha", "false");
+    formData.append("1. Họ tên người đăng ký", submitterName);
+    formData.append("2. Email liên hệ", submitterEmail);
+    formData.append("3. Số điện thoại", submitterPhone);
+    formData.append("4. Phòng ban công tác", finalDept);
+    formData.append("5. Đơn vị / Chi nhánh", workingUnit);
+    formData.append("6. Tên sáng kiến", ideaTitle);
+    formData.append("7. Lĩnh vực trọng tâm", selectedCategory);
+    formData.append("8. Vấn đề giải quyết", problemText || "(Chưa nhập)");
+    formData.append("9. Phương án thực thi", solutionText || "(Chưa nhập)");
+    formData.append("10. Đồng tác giả CC", coauthorEmailsList.join(', ') || "Nộp cá nhân");
 
     if (coauthorEmailsList.length > 0) {
-      emailPayload._cc = coauthorEmailsList.join(',');
+      formData.append("_cc", coauthorEmailsList.join(','));
+    }
+
+    if (uploadedFile) {
+      formData.append("11. File / Proposal đính kèm", uploadedFile);
     }
 
     // Dispatch requests concurrently
@@ -484,10 +487,9 @@ export default function LandingPage() {
       fetch("https://formsubmit.co/ajax/hoangthotudev@gmail.com", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           "Accept": "application/json"
         },
-        body: JSON.stringify(emailPayload)
+        body: formData
       }).catch(err => console.warn("FormSubmit notice:", err))
     ]);
 
@@ -1334,7 +1336,7 @@ export default function LandingPage() {
                         className="hidden"
                         onChange={(e) => {
                           if (e.target.files && e.target.files[0]) {
-                            setUploadedFile(e.target.files[0].name);
+                            setUploadedFile(e.target.files[0]);
                           }
                         }}
                       />
@@ -1350,7 +1352,7 @@ export default function LandingPage() {
                       <div className="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
                         <div className="flex items-center gap-2">
                           <span className="material-symbols-outlined text-orange-600 text-[20px]">description</span>
-                          <span className="font-bold text-slate-800">{uploadedFile}</span>
+                          <span className="font-bold text-slate-800">{uploadedFile.name}</span>
                         </div>
                         <button
                           type="button"
@@ -1533,6 +1535,15 @@ export default function LandingPage() {
                           </div>
                         </div>
                       )}
+                      {uploadedFile && (
+                        <div className="pt-2 border-t border-slate-100 flex items-center gap-2">
+                          <span className="text-slate-400 font-medium">Tệp đính kèm:</span>
+                          <span className="font-bold text-orange-600 flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[16px]">attachment</span>
+                            {uploadedFile.name}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -1618,6 +1629,7 @@ export default function LandingPage() {
                         setProblemText('');
                         setSolutionText('');
                         setCoauthors([]);
+                        setUploadedFile(null);
                         goToStep(1);
                       }}
                       className="px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-label-md text-xs sm:text-sm font-semibold transition-all shadow-md shadow-orange-500/25 active:scale-95"
@@ -1800,6 +1812,15 @@ export default function LandingPage() {
                         </span>
                       ))}
                     </div>
+                  </div>
+                )}
+                {uploadedFile && (
+                  <div className="pt-2 border-t border-slate-200 flex items-center gap-2">
+                    <span className="text-slate-500">Tệp đính kèm:</span>
+                    <strong className="text-orange-600 flex items-center gap-1 font-bold">
+                      <span className="material-symbols-outlined text-[16px]">attachment</span>
+                      {uploadedFile.name}
+                    </strong>
                   </div>
                 )}
               </div>
