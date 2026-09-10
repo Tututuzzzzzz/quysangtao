@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
+import { getAttachmentCloudFrontUrl } from '../utils/s3Uploader';
 
 export default function LandingPage() {
   const { user } = useAuth();
@@ -445,17 +446,12 @@ export default function LandingPage() {
 
     if (uploadedFile) {
       try {
-        const fileFormData = new FormData();
-        fileFormData.append("file", uploadedFile);
-        const uploadRes = await api.post('/upload', fileFormData, {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        });
-        if (uploadRes.data && uploadRes.data.url) {
-          backendAttachmentUrl = uploadRes.data.url;
-          backendAttachmentName = uploadRes.data.name || uploadedFile.name;
+        backendAttachmentUrl = await getAttachmentCloudFrontUrl(uploadedFile, api);
+        if (backendAttachmentUrl) {
+          backendAttachmentName = uploadedFile.name;
         }
       } catch (err) {
-        console.warn("Backend file upload warning:", err);
+        console.warn("Upload S3/CloudFront notice:", err);
       }
     }
 
@@ -495,7 +491,7 @@ export default function LandingPage() {
     }
 
     if (backendAttachmentUrl) {
-      formData.append("11. Link đính kèm CloudFront CDN", backendAttachmentUrl);
+      formData.append("11. Link xem/tải ảnh đính kèm (CloudFront CDN)", backendAttachmentUrl);
     } else if (uploadedFile) {
       formData.append("11. File / Proposal đính kèm", uploadedFile.name);
     }
