@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface IdeaHistoryRepository extends JpaRepository<IdeaHistory, Long> {
     List<IdeaHistory> findByIdeaIdOrderByCreatedAtAsc(Long ideaId);
+    void deleteByIdeaId(Long ideaId);
 }

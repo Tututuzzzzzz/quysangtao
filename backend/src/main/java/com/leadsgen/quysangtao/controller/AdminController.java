@@ -40,4 +40,12 @@ public class AdminController {
             @RequestBody IdeaEvaluationRequest request) {
         return ResponseEntity.ok(ideaService.evaluateIdea(id, request));
     }
+
+    @DeleteMapping("/ideas/{id}")
+    public ResponseEntity<?> deleteIdea(@PathVariable Long id) {
+        ideaService.deleteIdea(id);
+        java.util.Map<String, String> response = new java.util.HashMap<>();
+        response.put("message", "Đã xóa thành công sáng kiến ID: " + id);
+        return ResponseEntity.ok(response);
+    }
 }

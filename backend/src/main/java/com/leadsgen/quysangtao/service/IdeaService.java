@@ -18,6 +18,7 @@ public class IdeaService {
     private final IdeaRepository ideaRepository;
     private final CategoryRepository categoryRepository;
     private final IdeaHistoryRepository ideaHistoryRepository;
+    private final FeedbackRepository feedbackRepository;
     private final NotificationService notificationService;
     private final RabbitMQProducer rabbitMQProducer;
     private final EmailService emailService;
@@ -250,5 +251,15 @@ public class IdeaService {
                 .createdAt(idea.getCreatedAt())
                 .updatedAt(idea.getUpdatedAt())
                 .build();
+    }
+
+    @Transactional
+    public void deleteIdea(Long id) {
+        Idea idea = ideaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sáng kiến với ID: " + id));
+
+        ideaHistoryRepository.deleteByIdeaId(id);
+        feedbackRepository.deleteByIdeaId(id);
+        ideaRepository.delete(idea);
     }
 }

@@ -65,4 +65,12 @@ public class IdeaController {
         User currentUser = authService.getCurrentUser();
         return ResponseEntity.ok(feedbackService.addFeedback(id, currentUser, request));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteIdea(@PathVariable Long id) {
+        ideaService.deleteIdea(id);
+        java.util.Map<String, String> response = new java.util.HashMap<>();
+        response.put("message", "Đã xóa thành công sáng kiến ID: " + id);
+        return ResponseEntity.ok(response);
+    }
 }

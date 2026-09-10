@@ -15,7 +15,8 @@ import {
   DollarSign,
   TrendingUp,
   Tag,
-  UserCheck
+  UserCheck,
+  Trash2
 } from 'lucide-react';
 
 export default function KanbanBoard() {
@@ -56,6 +57,18 @@ export default function KanbanBoard() {
   const handleEvaluationSaved = () => {
     setSelectedIdeaForEvaluation(null);
     fetchIdeas();
+  };
+
+  const handleDeleteIdea = async (id) => {
+    if (window.confirm(`Bạn có chắc chắn muốn XÓA hẳn sáng kiến ID ${id} không?`)) {
+      try {
+        await api.delete(`/ideas/${id}`);
+        setIdeas((prev) => prev.filter((i) => i.id !== id));
+      } catch (err) {
+        console.error('Lỗi khi xóa sáng kiến:', err);
+        alert('Không thể xóa sáng kiến. Vui lòng kiểm tra quyền Admin.');
+      }
+    }
   };
 
   const columns = [
@@ -162,6 +175,13 @@ export default function KanbanBoard() {
                               </a>
                             )}
                             <span className="text-[10px] text-slate-500 font-mono">#{idea.id}</span>
+                            <button
+                              onClick={() => handleDeleteIdea(idea.id)}
+                              title="Xóa sáng kiến này"
+                              className="p-1 rounded hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
                           </div>
                         </div>
 
