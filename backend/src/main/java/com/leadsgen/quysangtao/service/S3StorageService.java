@@ -42,7 +42,7 @@ public class S3StorageService {
     public String uploadFile(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         String cleanFilename = originalFilename != null ? originalFilename.replaceAll("[^a-zA-Z0-9._-]", "_") : "file";
-        String s3Key = "uploads/" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 6) + "_" + cleanFilename;
+        String s3Key = "quysangtao/" + System.currentTimeMillis() + "_" + UUID.randomUUID().toString().substring(0, 6) + "_" + cleanFilename;
 
         try {
             if (accessKey == null || accessKey.trim().isEmpty() || secretKey == null || secretKey.trim().isEmpty()) {

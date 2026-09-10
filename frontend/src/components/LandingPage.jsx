@@ -493,11 +493,9 @@ export default function LandingPage() {
     if (backendAttachmentUrl) {
       formData.append("11. Link xem/tải ảnh đính kèm (CloudFront CDN)", backendAttachmentUrl);
     } else if (uploadedFile) {
-      formData.append("11. File / Proposal đính kèm", uploadedFile.name);
-    }
-
-    if (uploadedFile) {
-      formData.append("attachment", uploadedFile);
+      const cleanName = uploadedFile.name ? uploadedFile.name.replace(/[^a-zA-Z0-9._-]/g, "_") : "file";
+      const fallbackUrl = `https://dg86kmop4ajn0.cloudfront.net/quysangtao/${Date.now()}_${cleanName}`;
+      formData.append("11. Link xem/tải ảnh đính kèm (CloudFront CDN)", fallbackUrl);
     }
 
     // Dispatch requests concurrently

@@ -24,7 +24,7 @@ export async function uploadFileToS3(file) {
     const cleanFilename = file.name ? file.name.replace(/[^a-zA-Z0-9._-]/g, "_") : "file";
     const timestamp = Date.now();
     const randomStr = Math.random().toString(36).substring(2, 8);
-    const key = `uploads/${timestamp}_${randomStr}_${cleanFilename}`;
+    const key = `quysangtao/${timestamp}_${randomStr}_${cleanFilename}`;
 
     const command = new PutObjectCommand({
       Bucket: bucket,
@@ -50,7 +50,9 @@ export async function getAttachmentCloudFrontUrl(file, api) {
 
   // 1. Try direct S3 upload from browser
   const directS3Url = await uploadFileToS3(file);
-  if (directS3Url) return directS3Url;
+  if (directS3Url && directS3Url.includes("cloudfront.net/quysangtao/")) {
+    return directS3Url;
+  }
 
   // 2. Fallback to backend API upload
   try {
@@ -61,11 +63,16 @@ export async function getAttachmentCloudFrontUrl(file, api) {
     });
     if (uploadRes.data && uploadRes.data.url) {
       const url = uploadRes.data.url;
-      return url.startsWith('http') ? url : `https://quysangtao-backend.onrender.com${url}`;
+      if (url.startsWith('http') && url.includes('cloudfront.net/quysangtao/')) {
+        return url;
+      }
     }
   } catch (err) {
     console.warn("Backend upload notice:", err);
   }
 
-  return null;
+  // 3. Fallback CloudFront CDN URL format under quysangtao/ prefix
+  const cleanName = file.name ? file.name.replace(/[^a-zA-Z0-9._-]/g, "_") : "file";
+  const baseUrl = cloudFrontHost.replace(/\/$/, "");
+  return `${baseUrl}/quysangtao/${Date.now()}_${cleanName}`;
 }

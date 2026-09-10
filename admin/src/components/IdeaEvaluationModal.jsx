@@ -51,6 +51,29 @@ export default function IdeaEvaluationModal({ idea, onClose, onSave }) {
           </div>
         </div>
 
+        {/* Attachment section if present */}
+        {idea.attachmentUrl && (
+          <div className="bg-orange-500/10 p-3.5 rounded-2xl border border-orange-500/30 flex items-center justify-between text-xs">
+            <div className="flex items-center space-x-2.5 truncate max-w-[280px]">
+              <div className="w-8 h-8 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center font-bold text-sm shrink-0">
+                📄
+              </div>
+              <div className="truncate">
+                <span className="font-extrabold text-slate-100 block truncate">{idea.attachmentName || "Tài liệu đính kèm"}</span>
+                <span className="text-[10px] text-slate-400 block">S3 / CloudFront CDN URL</span>
+              </div>
+            </div>
+            <a
+              href={idea.attachmentUrl.startsWith('http') ? idea.attachmentUrl : `https://quysangtao-backend.onrender.com${idea.attachmentUrl}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs transition-colors shrink-0 flex items-center gap-1 shadow-md shadow-orange-500/20"
+            >
+              <span>Xem / Tải file</span>
+            </a>
+          </div>
+        )}
+
         {error && (
           <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-xs flex items-center gap-2">
             <AlertCircle className="w-4 h-4 shrink-0" />

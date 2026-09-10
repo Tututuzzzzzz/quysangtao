@@ -148,7 +148,21 @@ export default function KanbanBoard() {
                             <UserCheck className="w-3.5 h-3.5 text-amber-400" />
                             <span className="font-semibold text-slate-200">{idea.authorName || 'Công khai'}</span>
                           </div>
-                          <span className="text-[10px] text-slate-500 font-mono">#{idea.id}</span>
+                          <div className="flex items-center gap-2">
+                            {idea.attachmentUrl && (
+                              <a
+                                href={idea.attachmentUrl.startsWith('http') ? idea.attachmentUrl : `https://quysangtao-backend.onrender.com${idea.attachmentUrl}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={`Xem file đính kèm: ${idea.attachmentName || 'Tài liệu'}`}
+                                className="text-orange-400 hover:text-orange-300 font-bold transition-colors"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                📎 File
+                              </a>
+                            )}
+                            <span className="text-[10px] text-slate-500 font-mono">#{idea.id}</span>
+                          </div>
                         </div>
 
                         {/* Quick Admin Actions */}

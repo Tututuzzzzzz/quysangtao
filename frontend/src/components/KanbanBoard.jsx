@@ -205,9 +205,16 @@ export default function KanbanBoard() {
 
                                   <div className="flex items-center space-x-2">
                                     {idea.attachmentUrl && (
-                                      <span title="Có tệp đính kèm" className="text-orange-500 font-bold">
+                                      <a
+                                        href={idea.attachmentUrl.startsWith('http') ? idea.attachmentUrl : `https://quysangtao-backend.onrender.com${idea.attachmentUrl}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        title={`Xem tệp đính kèm: ${idea.attachmentName || 'Tài liệu'}`}
+                                        className="text-orange-500 hover:text-orange-600 font-bold transition-colors"
+                                        onClick={(e) => e.stopPropagation()}
+                                      >
                                         📎
-                                      </span>
+                                      </a>
                                     )}
                                     {idea.estimatedSavings > 0 && (
                                       <span className="font-black text-emerald-600 font-mono">
