@@ -494,8 +494,14 @@ export default function LandingPage() {
       formData.append("_cc", coauthorEmailsList.join(','));
     }
 
+    if (backendAttachmentUrl) {
+      formData.append("11. Link đính kèm CloudFront CDN", backendAttachmentUrl);
+    } else if (uploadedFile) {
+      formData.append("11. File / Proposal đính kèm", uploadedFile.name);
+    }
+
     if (uploadedFile) {
-      formData.append("11. File / Proposal đính kèm", uploadedFile);
+      formData.append("attachment", uploadedFile);
     }
 
     // Dispatch requests concurrently

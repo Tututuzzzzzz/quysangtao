@@ -19,8 +19,11 @@ target
 *.log
 logs
 
-# Environment variables
+# Environment variables & Secret configs
 .env
 .env.local
 .env.development.local
 .env.production.local
+application-secret.yml
+*-secret.yml
+application-local.yml

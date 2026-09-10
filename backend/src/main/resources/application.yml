@@ -54,3 +54,11 @@ app:
     name: "Ban Quản trị Quỹ"
   cors:
     allowed-origins: "http://localhost:5173,http://localhost:3000,https://quysangtao.vercel.app"
+
+aws:
+  s3:
+    access-key: ${AWS_ACCESS_KEY:}
+    secret-key: ${AWS_SECRET_KEY:}
+    bucket: ${AWS_S3_BUCKET:30usdv2-cdn}
+    region: ${AWS_REGION:ap-southeast-1}
+    cloudfront-host: ${AWS_CLOUDFRONT_HOST:https://dg86kmop4ajn0.cloudfront.net}
