@@ -529,20 +529,20 @@ export default function LandingPage() {
 
   return (
     <div className="w-full relative bg-slate-50 text-slate-900">
-      {/* FLOATING POPUP TOAST WARNING MODAL */}
+      {/* FLOATING CENTER-SCREEN POPUP WARNING MODAL */}
       {errorMessage && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[99999] w-[92%] max-w-md font-sans animate-bounce-in">
-          <div className="bg-slate-900/95 text-white p-5 rounded-3xl border-2 border-red-500 shadow-2xl shadow-red-500/40 backdrop-blur-xl relative flex flex-col gap-3.5">
+        <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4 font-sans animate-fade-in">
+          <div className="bg-slate-900 text-white w-full max-w-md p-6 rounded-3xl border-2 border-red-500 shadow-2xl shadow-red-500/50 relative flex flex-col gap-4 animate-scale-up">
             <div className="flex items-start justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-red-500/20 text-red-400 border border-red-500/40 flex items-center justify-center text-xl shrink-0 animate-pulse">
+              <div className="flex items-start gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-red-500/20 text-red-400 border border-red-500/40 flex items-center justify-center text-2xl shrink-0 animate-pulse">
                   🚨
                 </div>
                 <div>
-                  <h4 className="font-bold text-xs text-red-400 uppercase tracking-wider">
+                  <h4 className="font-extrabold text-sm text-red-400 uppercase tracking-wider">
                     Cảnh báo nhập liệu
                   </h4>
-                  <p className="text-xs text-slate-200 font-semibold leading-relaxed mt-0.5">
+                  <p className="text-xs text-slate-200 font-semibold leading-relaxed mt-1">
                     {errorMessage}
                   </p>
                 </div>
@@ -550,13 +550,13 @@ export default function LandingPage() {
               <button
                 type="button"
                 onClick={() => setErrorMessage("")}
-                className="w-7 h-7 rounded-full bg-slate-800 hover:bg-red-500/30 text-slate-400 hover:text-white flex items-center justify-center font-bold text-xs transition-colors shrink-0"
+                className="w-8 h-8 rounded-full bg-slate-800 hover:bg-red-500/30 text-slate-400 hover:text-white flex items-center justify-center font-bold text-sm transition-colors shrink-0"
               >
                 ✕
               </button>
             </div>
 
-            <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
               <button
                 type="button"
                 onClick={() => {
@@ -564,7 +564,7 @@ export default function LandingPage() {
                   const builder = document.getElementById('idea-builder');
                   if (builder) builder.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
-                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-bold text-xs shadow-md shadow-red-600/30 transition-all flex items-center justify-center gap-1.5"
+                className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-red-600 via-orange-500 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-bold text-xs shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 active:scale-95"
               >
                 <span>Đã hiểu & Sửa ngay</span>
                 <span>→</span>
@@ -944,20 +944,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Error / Alert Banner */}
-          {errorMessage && (
-            <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 flex items-start gap-3 text-xs text-red-700 relative z-10 animate-shake">
-              <span className="material-symbols-outlined text-red-500 text-[20px] shrink-0 mt-0.5">error</span>
-              <div className="flex-1 font-medium">{errorMessage}</div>
-              <button
-                type="button"
-                onClick={() => setErrorMessage("")}
-                className="text-red-400 hover:text-red-600 font-bold"
-              >
-                ×
-              </button>
-            </div>
-          )}
 
           {/* Progress Bar */}
           <div className="mb-8 relative z-10">
