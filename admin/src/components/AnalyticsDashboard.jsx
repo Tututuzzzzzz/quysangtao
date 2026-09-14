@@ -10,7 +10,8 @@ import {
   BarChart3, 
   PieChart, 
   Award,
-  Layers
+  Layers,
+  Download
 } from 'lucide-react';
 
 export default function AnalyticsDashboard() {
@@ -32,6 +33,43 @@ export default function AnalyticsDashboard() {
     }
   };
 
+  const exportToCSV = async () => {
+    try {
+      const res = await api.get('/ideas');
+      const data = res.data || [];
+      if (data.length === 0) {
+        alert('Không có dữ liệu sáng kiến để xuất!');
+        return;
+      }
+
+      const headers = ['ID', 'Tên Sáng Kiến', 'Tác Giả', 'Phòng Ban', 'Danh Mục', 'Trạng Thái', 'Điểm Thẩm Định', 'Tiết Kiệm (VNĐ)', 'Ngày Tạo'];
+      const rows = data.map(item => [
+        item.id,
+        `"${(item.title || '').replace(/"/g, '""')}"`,
+        `"${(item.authorName || '').replace(/"/g, '""')}"`,
+        `"${(item.authorDepartment || item.department || '').replace(/"/g, '""')}"`,
+        `"${(item.categoryName || item.tagCategory || '').replace(/"/g, '""')}"`,
+        `"${item.status || ''}"`,
+        item.score || 0,
+        item.estimatedSavings || 0,
+        `"${item.createdAt ? new Date(item.createdAt).toLocaleDateString('vi-VN') : ''}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `LeadsGen_Innovation_Hub_Report_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Lỗi xuất báo cáo CSV:', err);
+      alert('Không thể xuất báo cáo CSV.');
+    }
+  };
+
   if (loading) {
     return <div className="py-20 text-center text-slate-400 text-sm font-semibold">Đang tải báo cáo Analytics...</div>;
   }
@@ -42,6 +80,21 @@ export default function AnalyticsDashboard() {
 
   return (
     <div className="space-y-8 font-sans">
+      {/* Header Bar with Export Button */}
+      <div className="flex items-center justify-between bg-slate-900 border border-slate-800 p-4 rounded-2xl">
+        <div>
+          <h2 className="text-xl font-extrabold text-white">Dashboard Thống Kê & Báo Cáo Tác Động</h2>
+          <p className="text-xs text-slate-400 mt-0.5">Tổng quan hiệu suất sáng kiến, chi phí tiết kiệm và phân bổ phòng ban</p>
+        </div>
+        <button
+          onClick={exportToCSV}
+          className="px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all flex items-center gap-2 whitespace-nowrap"
+        >
+          <Download className="w-4 h-4" />
+          <span>Xuất Báo Cáo Excel/CSV</span>
+        </button>
+      </div>
+
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="p-6 rounded-2xl bg-slate-800 border border-slate-700/80 border-t-4 border-t-orange-500 space-y-2">

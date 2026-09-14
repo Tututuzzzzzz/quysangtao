@@ -20,7 +20,8 @@ import {
   ChevronRight,
   RefreshCw,
   ExternalLink,
-  DollarSign
+  DollarSign,
+  Download
 } from 'lucide-react';
 
 export default function KanbanBoard() {
@@ -85,6 +86,36 @@ export default function KanbanBoard() {
         alert('Không thể xóa sáng kiến. Vui lòng kiểm tra quyền Admin.');
       }
     }
+  };
+
+  const exportToCSV = () => {
+    if (filteredIdeas.length === 0) {
+      alert('Không có dữ liệu sáng kiến để xuất!');
+      return;
+    }
+
+    const headers = ['ID', 'Tên Sáng Kiến', 'Tác Giả', 'Phòng Ban', 'Danh Mục', 'Trạng Thái', 'Điểm Thẩm Định', 'Tiết Kiệm (VNĐ)', 'Ngày Tạo'];
+    const rows = filteredIdeas.map(item => [
+      item.id,
+      `"${(item.title || '').replace(/"/g, '""')}"`,
+      `"${(item.authorName || '').replace(/"/g, '""')}"`,
+      `"${(item.authorDepartment || item.department || '').replace(/"/g, '""')}"`,
+      `"${(item.categoryName || item.tagCategory || '').replace(/"/g, '""')}"`,
+      `"${item.status || ''}"`,
+      item.score || 0,
+      item.estimatedSavings || 0,
+      `"${item.createdAt ? new Date(item.createdAt).toLocaleDateString('vi-VN') : ''}"`
+    ]);
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `LeadsGen_Innovation_Hub_Report_${new Date().toISOString().slice(0,10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const statusConfig = {
@@ -212,6 +243,15 @@ export default function KanbanBoard() {
               <span className="hidden sm:inline">Danh Sách</span>
             </button>
           </div>
+
+          <button
+            onClick={exportToCSV}
+            title="Xuất báo cáo Excel / CSV"
+            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold text-xs transition-all shadow-md shadow-emerald-500/20 flex items-center gap-1.5 shrink-0"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">Xuất CSV</span>
+          </button>
 
           <button
             onClick={fetchIdeas}

@@ -47,9 +47,9 @@ export default function LeaderboardBanner({
 
                 {/* Header Badge */}
                 <div className="relative z-20 p-6 sm:p-8 flex items-center justify-between">
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/20 text-orange-400 font-label-sm text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-orange-500/40">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/20 text-orange-400 font-label-sm text-xs font-extrabold uppercase tracking-wider backdrop-blur-md border border-orange-500/40">
                     <span className="material-symbols-outlined text-[18px]">military_tech</span>
-                    <span>INNOVATION HIGHLIGHTS • BẢNG VÀNG VINH DANH LEADSGEN</span>
+                    <span>INNOVATION HIGHLIGHTS • DÁM NGHĨ → DÁM THỬ → TẠO TÁC ĐỘNG</span>
                   </div>
                 </div>
 

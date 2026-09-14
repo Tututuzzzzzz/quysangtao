@@ -120,8 +120,8 @@ export default function HeroSection({ stats }) {
         {/* Top Pill Tag */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-orange-200 shadow-sm backdrop-blur-md mb-6 animate-pulse">
           <span className="material-symbols-outlined text-orange-500 text-[18px]">auto_awesome</span>
-          <span className="font-label-sm text-xs uppercase tracking-widest text-orange-600 font-bold">
-            LeadsGen Innovation Engine 2026 • Mở Đợt Cấp Vốn Q1
+          <span className="font-label-sm text-xs uppercase tracking-widest text-orange-600 font-extrabold">
+            Idea → Action → Impact → Recognition • Dám Nghĩ → Dám Thử → Tạo Tác Động
           </span>
         </div>
 
@@ -134,8 +134,8 @@ export default function HeroSection({ stats }) {
 
         {/* Sub-headline */}
         <p className="font-body-lg text-lg md:text-xl text-slate-600 mt-4 max-w-2xl font-normal leading-relaxed">
-          Nơi mọi sáng kiến của thành viên LeadsGen đều được lắng nghe và biến thành hiện thực. Tài trợ vốn hạt giống lên tới{' '}
-          <span className="text-orange-600 font-bold">200 Triệu VNĐ</span>, hỗ trợ nguồn lực kỹ thuật và bảo hộ quyền lợi tác giả sáng lập.
+          Nơi mọi ý tưởng của CBNV LeadsGen đều được biến thành hành động: <br className="hidden sm:inline" />
+          <strong className="text-slate-900 font-semibold">Nhìn thấy vấn đề → Đề xuất → Hỗ trợ thử nghiệm → Tạo giá trị → Ghi nhận.</strong>
         </p>
 
         {/* CTA Buttons */}
