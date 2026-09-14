@@ -6,6 +6,19 @@ import { getAttachmentCloudFrontUrl } from '../utils/s3Uploader';
 export default function LandingPage() {
   const { user } = useAuth();
 
+  // Dashboard Stats & Leaderboard API state
+  const [stats, setStats] = useState({
+    totalIdeas: 0,
+    totalImplementedSavings: 0,
+    implementedCount: 0
+  });
+  const [leaderboardItems, setLeaderboardItems] = useState([]);
+
+  // Carousel Slider State & Handlers
+  const carouselTrackRef = useRef(null);
+  const [activeCarouselDot, setActiveCarouselDot] = useState(0);
+  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
+
   // Typewriter effect state
   const typingText = "Kiến tạo tương lai từ một ý tưởng nhỏ.";
   const [displayText, setDisplayText] = useState('');
@@ -161,11 +174,6 @@ export default function LandingPage() {
     renderConfetti();
   };
 
-  // Carousel Slider State & Handlers
-  const carouselTrackRef = useRef(null);
-  const [activeCarouselDot, setActiveCarouselDot] = useState(0);
-  const [isCarouselHovered, setIsCarouselHovered] = useState(false);
-
   const slideCarousel = (direction) => {
     if (carouselTrackRef.current) {
       const itemWidth = 360 + 24;
@@ -207,14 +215,6 @@ export default function LandingPage() {
     }, 4000);
     return () => clearInterval(interval);
   }, [isCarouselHovered, leaderboardItems]);
-
-  // Dashboard Stats & Leaderboard API state
-  const [stats, setStats] = useState({
-    totalIdeas: 0,
-    totalImplementedSavings: 0,
-    implementedCount: 0
-  });
-  const [leaderboardItems, setLeaderboardItems] = useState([]);
 
   useEffect(() => {
     api.get('/analytics/dashboard')
