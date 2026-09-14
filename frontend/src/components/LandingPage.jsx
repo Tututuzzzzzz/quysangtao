@@ -186,19 +186,20 @@ export default function LandingPage() {
     }
   };
 
-  // Auto-scroll Carousel effect (every 3 seconds)
+  // Auto-scroll Carousel effect (mỗi 3 giây lướt 1 lần)
   useEffect(() => {
-    if (isCarouselHovered) return;
+    if (isCarouselHovered || leaderboardItems.length <= 1) return;
     const interval = setInterval(() => {
       if (carouselTrackRef.current) {
         const itemWidth = 360 + 24;
-        const maxIndex = 3;
+        const maxIndex = leaderboardItems.length - 1;
         const nextIndex = activeCarouselDot >= maxIndex ? 0 : activeCarouselDot + 1;
         carouselTrackRef.current.scrollTo({ left: nextIndex * itemWidth, behavior: 'smooth' });
+        setActiveCarouselDot(nextIndex);
       }
     }, 3000);
     return () => clearInterval(interval);
-  }, [activeCarouselDot, isCarouselHovered]);
+  }, [activeCarouselDot, isCarouselHovered, leaderboardItems.length]);
 
   // Dashboard Stats & Leaderboard API state
   const [stats, setStats] = useState({
@@ -230,6 +231,7 @@ export default function LandingPage() {
   const [submitterName, setSubmitterName] = useState("");
   const [submitterEmail, setSubmitterEmail] = useState("");
   const [submitterPhone, setSubmitterPhone] = useState("");
+  const [employeeCode, setEmployeeCode] = useState("");
   const [department, setDepartment] = useState("Khối Công nghệ & Sản phẩm");
   const [customDepartment, setCustomDepartment] = useState("");
   const [workingUnit, setWorkingUnit] = useState("Trụ sở chính");
@@ -352,6 +354,10 @@ export default function LandingPage() {
         setErrorMessage("Lỗi định dạng ở Bước 1: Số điện thoại không đúng định dạng Việt Nam! (Ví dụ hợp lệ: 0912345678)");
         return;
       }
+      if (!employeeCode.trim()) {
+        setErrorMessage("Lỗi nhập liệu ở Bước 1: Vui lòng nhập Mã nhân viên (Ví dụ: NV0123)!");
+        return;
+      }
     }
 
     // Validation when advancing from step 2
@@ -430,6 +436,11 @@ export default function LandingPage() {
       goToStep(1);
       return;
     }
+    if (!employeeCode.trim()) {
+      setErrorMessage("Lỗi ở Bước 1: Vui lòng nhập Mã nhân viên (Ví dụ: NV0123)!");
+      goToStep(1);
+      return;
+    }
     if (!ideaTitle.trim()) {
       setErrorMessage("Lỗi ở Bước 2: Vui lòng nhập Tên ý tưởng!");
       goToStep(2);
@@ -465,6 +476,7 @@ export default function LandingPage() {
       submitterName: submitterName,
       submitterEmail: submitterEmail,
       submitterPhone: submitterPhone,
+      employeeCode: employeeCode.trim().toUpperCase(),
       workingUnit: workingUnit,
       coauthorEmails: coauthorEmailsList.join(','),
       attachmentUrl: backendAttachmentUrl,
@@ -477,6 +489,7 @@ export default function LandingPage() {
     formData.append("_captcha", "false");
     formData.append("1. Họ tên người đăng ký", submitterName);
     formData.append("2. Email liên hệ", submitterEmail);
+    formData.append("3. Mã nhân viên", employeeCode.trim().toUpperCase());
     formData.append("3. Số điện thoại", submitterPhone);
     formData.append("4. Phòng ban công tác", finalDept);
     formData.append("5. Đơn vị / Chi nhánh", workingUnit);
@@ -601,7 +614,7 @@ export default function LandingPage() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-orange-200 shadow-sm backdrop-blur-md mb-6 animate-pulse">
             <span className="material-symbols-outlined text-orange-500 text-[18px]">auto_awesome</span>
             <span className="font-label-sm text-xs uppercase tracking-widest text-orange-600 font-bold">
-              LeadsGen Innovation Engine 2025 • Mở Đợt Cấp Vốn Q2
+              LeadsGen Innovation Engine 2026 • Mở Đợt Cấp Vốn Q1
             </span>
           </div>
 
@@ -822,13 +835,15 @@ export default function LandingPage() {
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-100 text-orange-700 text-xs font-label-sm font-bold uppercase tracking-wider mb-1 border border-orange-200">
                 <span className="material-symbols-outlined text-[16px]">military_tech</span> Bảng Vàng Vinh Danh LeadsGen
               </div>
-              <h3 className="font-headline-lg text-2xl font-bold text-slate-900">Ý Tưởng Tiêu Biểu & Tinh Anh Tháng Này</h3>
+              <h3 className="font-headline-lg text-2xl font-bold text-slate-900">
+                Ý Tưởng Tiêu Biểu & Tinh Anh Tháng {new Date().getMonth() + 1}/{new Date().getFullYear()}
+              </h3>
             </div>
 
             {/* Carousel Controls & Indicators */}
             <div className="flex items-center gap-3">
               <div className="hidden sm:flex items-center gap-1.5 mr-2">
-                {[0, 1, 2, 3].map((dotIdx) => (
+                {leaderboardItems.map((_, dotIdx) => (
                   <button
                     key={dotIdx}
                     aria-label={`Đến trang ${dotIdx + 1}`}
@@ -871,7 +886,7 @@ export default function LandingPage() {
             {leaderboardItems.length > 0 ? (
               leaderboardItems.map((item, idx) => (
                 <div
-                  key={item.userId || idx}
+                  key={item.userId || item.employeeCode || idx}
                   className="min-w-[320px] md:min-w-[360px] max-w-[380px] p-6 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between shrink-0 hover:border-orange-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 shadow-sm"
                 >
                   <div>
@@ -879,9 +894,16 @@ export default function LandingPage() {
                       <span className="px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 text-xs font-label-sm font-semibold border border-sky-200">
                         {item.department || 'Phòng Ban LeadsGen'}
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-mono-metric font-bold border border-amber-200">
-                        <span className="material-symbols-outlined text-[14px]">military_tech</span> Top #{item.rank || idx + 1}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        {item.employeeCode && (
+                          <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-mono font-bold border border-slate-200">
+                            {item.employeeCode}
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-mono-metric font-bold border border-amber-200">
+                          <span className="material-symbols-outlined text-[14px]">military_tech</span> Top #{item.rank || idx + 1}
+                        </span>
+                      </div>
                     </div>
                     <h4 className="font-headline-sm text-base font-bold text-slate-900 line-clamp-2">
                       {item.fullName}
@@ -1033,6 +1055,24 @@ export default function LandingPage() {
                           onChange={(e) => setSubmitterName(e.target.value)}
                           placeholder="VD: Nguyễn Văn Anh"
                           className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm font-medium"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Employee Code */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-800 mb-1" htmlFor="employee-code">
+                        Mã nhân viên <span className="text-red-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3.5 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 text-[18px]">badge</span>
+                        <input
+                          id="employee-code"
+                          type="text"
+                          value={employeeCode}
+                          onChange={(e) => setEmployeeCode(e.target.value)}
+                          placeholder="VD: NV01234"
+                          className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 text-sm font-medium uppercase"
                         />
                       </div>
                     </div>
@@ -1488,6 +1528,10 @@ export default function LandingPage() {
                         <span className="font-bold text-slate-900">{submitterName || "Chưa nhập"}</span>
                       </div>
                       <div>
+                        <span className="text-slate-400 block font-medium">Mã nhân viên:</span>
+                        <span className="font-bold text-slate-900 uppercase">{employeeCode || "Chưa nhập"}</span>
+                      </div>
+                      <div>
                         <span className="text-slate-400 block font-medium">Email liên hệ:</span>
                         <span className="font-bold text-slate-900">{submitterEmail || "Chưa nhập"}</span>
                       </div>
@@ -1800,6 +1844,7 @@ export default function LandingPage() {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
                   <div><span className="text-slate-500">Họ tên:</span> <strong className="text-slate-900">{submitterName || "Chưa nhập"}</strong></div>
+                  <div><span className="text-slate-500">Mã NV:</span> <strong className="text-slate-900 uppercase">{employeeCode || "Chưa nhập"}</strong></div>
                   <div><span className="text-slate-500">Email:</span> <strong className="text-slate-900">{submitterEmail || "Chưa nhập"}</strong></div>
                   <div><span className="text-slate-500">Số điện thoại:</span> <strong className="text-slate-900">{submitterPhone || "Chưa nhập"}</strong></div>
                   <div><span className="text-slate-500">Phòng ban & Đơn vị:</span> <strong className="text-slate-900">{department === 'Khác' ? customDepartment : department} ({workingUnit})</strong></div>

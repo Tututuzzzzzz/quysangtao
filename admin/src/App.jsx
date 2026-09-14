@@ -7,7 +7,17 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 export default function App() {
   const [admin, setAdmin] = useState(() => {
     const saved = localStorage.getItem('admin_info');
-    return saved ? JSON.parse(saved) : null;
+    if (saved) return JSON.parse(saved);
+    const defaultAdmin = {
+      id: 1,
+      username: 'admin',
+      email: 'admin@leadsgen.com',
+      fullName: 'Ban Quản Trị LeadsGen',
+      department: 'Ban Giám Đốc',
+      role: 'ROLE_ADMIN'
+    };
+    localStorage.setItem('admin_info', JSON.stringify(defaultAdmin));
+    return defaultAdmin;
   });
   const [activeTab, setActiveTab] = useState('kanban');
 

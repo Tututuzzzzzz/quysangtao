@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,24 +21,60 @@ public class LeaderboardService {
     public List<LeaderboardItemDto> getUserLeaderboard() {
         List<Idea> allIdeas = ideaRepository.findAllByOrderByCreatedAtDesc();
 
-        Map<String, List<Idea>> groupedBySubmitter = new HashMap<>();
+        LocalDateTime now = LocalDateTime.now();
+        int currentMonth = now.getMonthValue();
+        int currentYear = now.getYear();
 
-        for (Idea idea : allIdeas) {
+        // Lọc các sáng kiến thuộc tháng hiện tại
+        List<Idea> monthIdeas = allIdeas.stream()
+                .filter(i -> i.getCreatedAt() != null 
+                        && i.getCreatedAt().getMonthValue() == currentMonth 
+                        && i.getCreatedAt().getYear() == currentYear)
+                .collect(Collectors.toList());
+
+        // Nếu tháng hiện tại chưa có dữ liệu, dùng tất cả ý tưởng để tránh bảng bị rỗng khi test
+        List<Idea> ideasToProcess = monthIdeas.isEmpty() ? allIdeas : monthIdeas;
+
+        // Gom nhóm theo Mã nhân viên (hoặc Email/Name nếu không có mã NV)
+        Map<String, List<Idea>> groupedByEmpCode = new LinkedHashMap<>();
+
+        for (Idea idea : ideasToProcess) {
             if (idea.getStatus() == IdeaStatus.REJECTED) {
-                continue; // Skip rejected ideas
+                continue; // Bỏ qua ý tưởng bị từ chối
             }
-            String name = (idea.getSubmitterName() != null && !idea.getSubmitterName().trim().isEmpty())
-                    ? idea.getSubmitterName().trim()
-                    : (idea.getAuthor() != null ? idea.getAuthor().getFullName() : "Thành viên LeadsGen");
+            String key = (idea.getEmployeeCode() != null && !idea.getEmployeeCode().trim().isEmpty())
+                    ? idea.getEmployeeCode().trim().toUpperCase()
+                    : ((idea.getSubmitterEmail() != null && !idea.getSubmitterEmail().trim().isEmpty())
+                            ? idea.getSubmitterEmail().trim().toLowerCase()
+                            : (idea.getSubmitterName() != null ? idea.getSubmitterName().trim() : "Thành viên LeadsGen"));
 
-            groupedBySubmitter.computeIfAbsent(name, k -> new ArrayList<>()).add(idea);
+            groupedByEmpCode.computeIfAbsent(key, k -> new ArrayList<>()).add(idea);
         }
 
         List<LeaderboardItemDto> leaderboard = new ArrayList<>();
 
-        for (Map.Entry<String, List<Idea>> entry : groupedBySubmitter.entrySet()) {
-            String name = entry.getKey();
+        for (Map.Entry<String, List<Idea>> entry : groupedByEmpCode.entrySet()) {
             List<Idea> ideas = entry.getValue();
+            if (ideas.isEmpty()) continue;
+
+            // Vì allIdeas đã được ORDER BY createdAt DESC nên phần tử đầu tiên luôn là sáng kiến mới nhất
+            Idea latestIdea = ideas.get(0);
+
+            String name = (latestIdea.getSubmitterName() != null && !latestIdea.getSubmitterName().trim().isEmpty())
+                    ? latestIdea.getSubmitterName().trim()
+                    : (latestIdea.getAuthor() != null ? latestIdea.getAuthor().getFullName() : "Thành viên LeadsGen");
+
+            String dept = (latestIdea.getDepartment() != null && !latestIdea.getDepartment().trim().isEmpty())
+                    ? latestIdea.getDepartment().trim()
+                    : "Khối Công nghệ & Sản phẩm";
+
+            String empCode = (latestIdea.getEmployeeCode() != null && !latestIdea.getEmployeeCode().trim().isEmpty())
+                    ? latestIdea.getEmployeeCode().trim().toUpperCase()
+                    : null;
+
+            String avatarUrl = latestIdea.getAuthor() != null && latestIdea.getAuthor().getAvatarUrl() != null
+                    ? latestIdea.getAuthor().getAvatarUrl()
+                    : "https://api.dicebear.com/7.x/avataaars/svg?seed=" + name;
 
             long totalIdeas = ideas.size();
             long implementedIdeas = ideas.stream().filter(i -> i.getStatus() == IdeaStatus.IMPLEMENTED).count();
@@ -45,19 +83,8 @@ public class LeaderboardService {
                     .map(i -> i.getEstimatedSavings() != null ? i.getEstimatedSavings() : BigDecimal.ZERO)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-            String dept = ideas.stream()
-                    .map(Idea::getDepartment)
-                    .filter(d -> d != null && !d.trim().isEmpty())
-                    .findFirst()
-                    .orElse("Khối Công nghệ & Sản phẩm");
-
-            String avatarUrl = ideas.stream()
-                    .map(i -> i.getAuthor() != null ? i.getAuthor().getAvatarUrl() : null)
-                    .filter(Objects::nonNull)
-                    .findFirst()
-                    .orElse("https://api.dicebear.com/7.x/avataaars/svg?seed=" + name);
-
             leaderboard.add(LeaderboardItemDto.builder()
+                    .employeeCode(empCode)
                     .fullName(name)
                     .department(dept)
                     .avatarUrl(avatarUrl)
@@ -68,7 +95,7 @@ public class LeaderboardService {
                     .build());
         }
 
-        // Sort by implementedIdeas DESC, totalScore DESC, totalIdeas DESC
+        // Sắp xếp theo: implementedIdeas DESC, totalScore DESC, totalIdeas DESC
         leaderboard.sort((a, b) -> {
             int cmpImpl = Long.compare(b.getImplementedIdeas(), a.getImplementedIdeas());
             if (cmpImpl != 0) return cmpImpl;
@@ -77,12 +104,17 @@ public class LeaderboardService {
             return Long.compare(b.getTotalIdeas(), a.getTotalIdeas());
         });
 
-        // Assign ranks
+        // Chỉ lấy Top 5 xuất sắc nhất
+        List<LeaderboardItemDto> top5Leaderboard = leaderboard.stream()
+                .limit(5)
+                .collect(Collectors.toList());
+
+        // Đánh số thứ tự Rank 1 -> 5
         int rank = 1;
-        for (LeaderboardItemDto item : leaderboard) {
+        for (LeaderboardItemDto item : top5Leaderboard) {
             item.setRank(rank++);
         }
 
-        return leaderboard;
+        return top5Leaderboard;
     }
 }

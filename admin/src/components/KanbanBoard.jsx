@@ -118,7 +118,19 @@ export default function KanbanBoard() {
       </div>
 
       {loading ? (
-        <div className="py-20 text-center text-slate-400 text-sm font-semibold">Đang tải dữ liệu Kanban Board...</div>
+        <div className="py-20 text-center flex flex-col items-center justify-center space-y-4">
+          <div className="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
+          <div className="text-slate-200 text-sm font-bold">Đang tải dữ liệu sáng kiến từ Database Render...</div>
+          <p className="text-xs text-slate-400 max-w-md">
+            (Nếu Server Render vừa khởi động lại sau khoảng thời gian nghỉ, quá trình tải có thể mất từ 10 - 20 giây)
+          </p>
+          <button
+            onClick={fetchIdeas}
+            className="px-4 py-2 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 text-xs font-bold transition-all"
+          >
+            Tải lại dữ liệu
+          </button>
+        </div>
       ) : (
         /* Kanban 5 Column Layout */
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 items-start overflow-x-auto pb-6">

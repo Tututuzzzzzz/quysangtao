@@ -210,7 +210,14 @@ export default function LeaderboardView() {
                             className="w-9 h-9 rounded-full border border-slate-200 shadow-xs object-cover"
                           />
                           <div>
-                            <span className="font-bold text-slate-900 block">{item.fullName}</span>
+                            <div className="flex items-center space-x-2">
+                              <span className="font-bold text-slate-900 block">{item.fullName}</span>
+                              {item.employeeCode && (
+                                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-mono font-semibold border border-slate-200">
+                                  {item.employeeCode}
+                                </span>
+                              )}
+                            </div>
                             {item.rank <= 3 && (
                               <span className="text-[10px] font-bold text-orange-600 inline-flex items-center space-x-1">
                                 <Star className="w-3 h-3 fill-current" />

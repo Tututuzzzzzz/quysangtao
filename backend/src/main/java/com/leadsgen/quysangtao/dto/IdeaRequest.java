@@ -38,6 +38,9 @@ public class IdeaRequest {
     @Email(message = "Địa chỉ Email liên hệ không đúng định dạng (Ví dụ hợp lệ: name@leadsgen.com)!")
     private String submitterEmail;
 
+    @NotBlank(message = "Vui lòng nhập Mã nhân viên!")
+    private String employeeCode;
+
     @Pattern(regexp = "^$|^(0|\\+84)[0-9]{9,10}$", message = "Số điện thoại không đúng định dạng Việt Nam (Ví dụ hợp lệ: 0912345678)!")
     private String submitterPhone;
 

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 public class LeaderboardItemDto {
     private int rank;
     private Long userId;
+    private String employeeCode;
     private String fullName;
     private String department;
     private String avatarUrl;
