@@ -174,44 +174,18 @@ export default function LandingPage() {
     renderConfetti();
   };
 
-  const slideCarousel = (direction) => {
-    if (carouselTrackRef.current) {
-      const itemWidth = 360 + 24;
-      carouselTrackRef.current.scrollBy({ left: direction * itemWidth, behavior: 'smooth' });
-    }
-  };
-
   const scrollCarouselToIndex = (index) => {
-    if (carouselTrackRef.current) {
-      const itemWidth = 360 + 24;
-      carouselTrackRef.current.scrollTo({ left: index * itemWidth, behavior: 'smooth' });
-      setActiveCarouselDot(index);
-    }
+    setActiveCarouselDot(index);
   };
 
-  const handleCarouselScroll = () => {
-    if (carouselTrackRef.current) {
-      const itemWidth = 360 + 24;
-      const index = Math.round(carouselTrackRef.current.scrollLeft / itemWidth);
-      const maxIdx = Math.max(0, (leaderboardItems?.length || 1) - 1);
-      const clamped = Math.min(Math.max(index, 0), maxIdx);
-      setActiveCarouselDot((prev) => (prev === clamped ? prev : clamped));
-    }
-  };
-
-  // Auto-scroll Carousel effect (mỗi 4 giây lướt 1 lần)
+  // Auto-advance Leaderboard Hero Banner effect (mỗi 4 giây lướt 1 lần)
   useEffect(() => {
     if (isCarouselHovered || !Array.isArray(leaderboardItems) || leaderboardItems.length <= 1) return;
     const interval = setInterval(() => {
-      if (carouselTrackRef.current) {
-        const itemWidth = 360 + 24;
+      setActiveCarouselDot((prevDot) => {
         const maxIndex = leaderboardItems.length - 1;
-        setActiveCarouselDot((prevDot) => {
-          const nextIndex = prevDot >= maxIndex ? 0 : prevDot + 1;
-          carouselTrackRef.current?.scrollTo({ left: nextIndex * itemWidth, behavior: 'smooth' });
-          return nextIndex;
-        });
-      }
+        return prevDot >= maxIndex ? 0 : prevDot + 1;
+      });
     }, 4000);
     return () => clearInterval(interval);
   }, [isCarouselHovered, leaderboardItems]);
