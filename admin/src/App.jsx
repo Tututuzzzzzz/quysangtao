@@ -6,8 +6,15 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 
 export default function App() {
   const [admin, setAdmin] = useState(() => {
-    const saved = localStorage.getItem('admin_info');
-    if (saved) return JSON.parse(saved);
+    try {
+      const saved = localStorage.getItem('admin_info');
+      if (saved && saved !== 'undefined' && saved !== 'null') {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn("Lỗi đọc admin_info từ localStorage:", e);
+      localStorage.removeItem('admin_info');
+    }
     const defaultAdmin = {
       id: 1,
       username: 'admin',

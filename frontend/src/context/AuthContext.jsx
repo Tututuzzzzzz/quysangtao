@@ -5,8 +5,16 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem('user_info');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('user_info');
+      if (saved && saved !== 'undefined' && saved !== 'null') {
+        return JSON.parse(saved);
+      }
+    } catch (err) {
+      console.warn("Lỗi đọc user_info từ localStorage:", err);
+      localStorage.removeItem('user_info');
+    }
+    return null;
   });
   const [loading, setLoading] = useState(true);
 
@@ -15,7 +23,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('jwt_token');
       if (token) {
         try {
-          const res = await api.get('/auth/me');
+          const res = await api.get('/auth/me', { timeout: 5000 });
           setUser(res.data);
           localStorage.setItem('user_info', JSON.stringify(res.data));
         } catch (err) {
