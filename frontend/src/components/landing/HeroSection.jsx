@@ -126,8 +126,8 @@ export default function HeroSection({ stats }) {
         </div>
 
         {/* Headline with Typewriter Effect */}
-        <h1 className="font-display-hero text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 max-w-4xl leading-[1.15]">
-          <span className="typing-cursor text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-500 to-sky-600">
+        <h1 className="font-display-hero text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 max-w-full leading-[1.15] whitespace-nowrap">
+          <span className="typing-cursor text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-500 to-sky-600 whitespace-nowrap">
             {displayText}
           </span>
         </h1>
