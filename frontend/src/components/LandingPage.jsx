@@ -177,6 +177,7 @@ export default function LandingPage() {
     if (carouselTrackRef.current) {
       const itemWidth = 360 + 24;
       carouselTrackRef.current.scrollTo({ left: index * itemWidth, behavior: 'smooth' });
+      setActiveCarouselDot(index);
     }
   };
 
@@ -184,11 +185,12 @@ export default function LandingPage() {
     if (carouselTrackRef.current) {
       const itemWidth = 360 + 24;
       const index = Math.round(carouselTrackRef.current.scrollLeft / itemWidth);
-      setActiveCarouselDot(Math.min(Math.max(index, 0), 3));
+      const maxIdx = Math.max(0, leaderboardItems.length - 1);
+      setActiveCarouselDot(Math.min(Math.max(index, 0), maxIdx));
     }
   };
 
-  // Auto-scroll Carousel effect (mỗi 3 giây lướt 1 lần)
+  // Auto-scroll Carousel effect (mỗi 4 giây lướt 1 lần)
   useEffect(() => {
     if (isCarouselHovered || leaderboardItems.length <= 1) return;
     const interval = setInterval(() => {
@@ -199,7 +201,7 @@ export default function LandingPage() {
         carouselTrackRef.current.scrollTo({ left: nextIndex * itemWidth, behavior: 'smooth' });
         setActiveCarouselDot(nextIndex);
       }
-    }, 3000);
+    }, 4000);
     return () => clearInterval(interval);
   }, [activeCarouselDot, isCarouselHovered, leaderboardItems.length]);
 
@@ -657,7 +659,7 @@ export default function LandingPage() {
             <div className="glass-panel p-6 rounded-2xl flex flex-col items-center text-center glow-hover border-t-4 border-t-orange-500">
               <span className="material-symbols-outlined text-orange-500 text-[32px] mb-1">lightbulb</span>
               <span className="font-mono-metric text-2xl sm:text-3xl font-bold text-slate-900">
-                {(stats.totalIdeas || 0).toLocaleString('vi-VN')}
+                {Number(stats?.totalIdeas || 0).toLocaleString('vi-VN')}
               </span>
               <span className="font-label-sm text-xs text-slate-500 uppercase tracking-wider mt-1 font-semibold">Sáng kiến đã nộp</span>
             </div>
@@ -665,12 +667,12 @@ export default function LandingPage() {
               <span className="material-symbols-outlined text-amber-500 text-[32px] mb-1">payments</span>
               <div className="flex items-baseline gap-1">
                 <span className="font-mono-metric text-2xl sm:text-3xl font-bold text-slate-900">
-                  {stats.totalImplementedSavings && stats.totalImplementedSavings >= 1000000000
-                    ? (stats.totalImplementedSavings / 1000000000).toFixed(1)
-                    : (stats.totalImplementedSavings || 0).toLocaleString('vi-VN')}
+                  {Number(stats?.totalImplementedSavings || 0) >= 1000000000
+                    ? (Number(stats?.totalImplementedSavings || 0) / 1000000000).toFixed(1)
+                    : Number(stats?.totalImplementedSavings || 0).toLocaleString('vi-VN')}
                 </span>
                 <span className="font-mono-metric text-lg text-amber-600 font-bold">
-                  {stats.totalImplementedSavings && stats.totalImplementedSavings >= 1000000000 ? 'Tỷ' : 'VNĐ'}
+                  {Number(stats?.totalImplementedSavings || 0) >= 1000000000 ? 'Tỷ' : 'VNĐ'}
                 </span>
               </div>
               <span className="font-label-sm text-xs text-slate-500 uppercase tracking-wider mt-1 font-semibold">Tiết kiệm / Giải ngân</span>
@@ -678,7 +680,7 @@ export default function LandingPage() {
             <div className="glass-panel p-6 rounded-2xl flex flex-col items-center text-center glow-hover border-t-4 border-t-sky-500">
               <span className="material-symbols-outlined text-sky-500 text-[32px] mb-1">rocket</span>
               <span className="font-mono-metric text-2xl sm:text-3xl font-bold text-sky-600">
-                {(stats.implementedCount || 0).toLocaleString('vi-VN')}
+                {Number(stats?.implementedCount || 0).toLocaleString('vi-VN')}
               </span>
               <span className="font-label-sm text-xs text-slate-500 uppercase tracking-wider mt-1 font-semibold">Dự án áp dụng</span>
             </div>
@@ -924,7 +926,7 @@ export default function LandingPage() {
                         />
                       ) : (
                         <div className="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center font-bold text-white text-[11px]">
-                          {item.fullName ? item.fullName.charAt(0).toUpperCase() : 'U'}
+                          {String(item.fullName || 'U').charAt(0).toUpperCase()}
                         </div>
                       )}
                       <span className="font-semibold text-slate-800">{item.fullName}</span>
