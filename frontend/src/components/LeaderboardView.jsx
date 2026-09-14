@@ -24,7 +24,7 @@ export default function LeaderboardView() {
         api.get('/analytics/leaderboard'),
         api.get('/analytics/dashboard')
       ]);
-      setLeaderboard(lbRes.data);
+      setLeaderboard(Array.isArray(lbRes.data) ? lbRes.data : []);
       setStats(statsRes.data);
     } catch (err) {
       console.error(err);

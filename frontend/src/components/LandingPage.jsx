@@ -27,6 +27,7 @@ export default function LandingPage() {
     const canvas = particleCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     let animationFrameId;
 
     let width = (canvas.width = canvas.offsetWidth || window.innerWidth);
@@ -105,6 +106,7 @@ export default function LandingPage() {
     const canvas = confettiCanvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
+    if (!ctx) return;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
