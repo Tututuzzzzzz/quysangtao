@@ -3,8 +3,8 @@ import api from '../services/api';
 import { ShieldCheck, Lock, User, ArrowRight, AlertCircle } from 'lucide-react';
 
 export default function AdminLogin({ onLoginSuccess }) {
-  const [username, setUsername] = useState('admin');
-  const [password, setPassword] = useState('admin123');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -59,7 +59,7 @@ export default function AdminLogin({ onLoginSuccess }) {
             <ShieldCheck className="w-9 h-9" />
           </div>
           <span className="px-3 py-1 rounded-full bg-amber-500/10 text-amber-400 text-xs font-bold uppercase tracking-wider border border-amber-500/20">
-            Port 5174 • Chế Độ Quản Trị Admin
+            Chế Độ Quản Trị Admin
           </span>
           <h1 className="text-2xl font-extrabold text-white mt-3">Ban Quản Trị LeadsGen</h1>
           <p className="text-xs text-slate-400 mt-1">Đăng nhập tài khoản Admin để thẩm định & duyệt sáng kiến tập đoàn</p>
@@ -101,10 +101,6 @@ export default function AdminLogin({ onLoginSuccess }) {
                 className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 text-sm font-semibold transition-all"
               />
             </div>
-          </div>
-
-          <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-300 font-medium">
-            💡 Mặc định: Username: <code className="font-bold">admin</code> | Pass: <code className="font-bold">admin123</code>
           </div>
 
           <button
