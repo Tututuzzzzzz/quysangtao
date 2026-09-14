@@ -870,7 +870,7 @@ export default function LandingPage() {
                   <div className="relative z-20 p-6 sm:p-8 flex items-center justify-between">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-500/20 text-orange-400 font-label-sm text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-orange-500/40">
                       <span className="material-symbols-outlined text-[18px]">military_tech</span>
-                      <span>INNOVATION HIGHLIGHTS • BẢNG VÀNG ROPHIM CINEMA</span>
+                      <span>INNOVATION HIGHLIGHTS • BẢNG VÀNG VINH DANH LEADSGEN</span>
                     </div>
                   </div>
 
@@ -923,7 +923,7 @@ export default function LandingPage() {
                   {/* Bottom Right Thumbnail Strip Navigation (Rophim Movie Strip) */}
                   <div className="relative z-20 p-6 sm:p-8 flex flex-col sm:flex-row items-end sm:items-center justify-between gap-4 border-t border-slate-800/80 bg-slate-950/60 backdrop-blur-md">
                     <div className="text-xs text-slate-400 font-label-sm font-semibold">
-                      Tháng {new Date().getMonth() + 1}/{new Date().getFullYear()} • Chuyển slide tự động
+                      Tháng {new Date().getMonth() + 1}/{new Date().getFullYear()}
                     </div>
 
                     {/* Thumbnail List Strip */}
@@ -990,12 +990,6 @@ export default function LandingPage() {
                 <span>LEADSGEN IDEA BUILDER • BIỂU MẪU ĐÓNG GÓP SÁNG KIẾN</span>
               </div>
               <h2 className="font-headline-lg text-2xl sm:text-3xl font-bold text-slate-900 mt-1">Gửi trực tiếp tới Ban Quản trị Quỹ Sáng Tạo</h2>
-            </div>
-            <div className="flex items-center gap-2 self-start sm:self-auto">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-label-sm text-xs">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Hệ thống sẵn sàng</span>
-              </span>
             </div>
           </div>
 
