@@ -1,15 +1,64 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../services/api';
-import { ShieldCheck, Lock, User, ArrowRight, AlertCircle } from 'lucide-react';
+import { ShieldCheck, Lock, User, ArrowRight, AlertCircle, Clock } from 'lucide-react';
 
 export default function AdminLogin({ onLoginSuccess }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [lockSeconds, setLockSeconds] = useState(0);
+
+  // Check initial local lockout state
+  useEffect(() => {
+    const lockUntil = localStorage.getItem('admin_login_lock_until');
+    if (lockUntil) {
+      const remaining = Math.ceil((parseInt(lockUntil, 10) - Date.now()) / 1000);
+      if (remaining > 0) {
+        setLockSeconds(remaining);
+      } else {
+        localStorage.removeItem('admin_login_lock_until');
+        localStorage.removeItem('admin_login_failed_attempts');
+      }
+    }
+  }, []);
+
+  // Timer countdown interval
+  useEffect(() => {
+    if (lockSeconds <= 0) return;
+    const timer = setInterval(() => {
+      setLockSeconds((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          localStorage.removeItem('admin_login_lock_until');
+          localStorage.removeItem('admin_login_failed_attempts');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [lockSeconds]);
+
+  const recordFailedAttempt = (errMsg) => {
+    let attempts = parseInt(localStorage.getItem('admin_login_failed_attempts') || '0', 10) + 1;
+    localStorage.setItem('admin_login_failed_attempts', attempts.toString());
+
+    if (attempts >= 5) {
+      const lockUntil = Date.now() + 15 * 60 * 1000;
+      localStorage.setItem('admin_login_lock_until', lockUntil.toString());
+      setLockSeconds(15 * 60);
+      setError('Bạn đã nhập sai quá 5 lần liên tiếp. Hệ thống đã khóa chức năng đăng nhập 15 phút!');
+    } else {
+      const remaining = 5 - attempts;
+      setError(`${errMsg || 'Tên đăng nhập hoặc mật khẩu không chính xác.'} (Còn ${remaining} lần thử)`);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (lockSeconds > 0) return;
+
     setError('');
     setLoading(true);
 
@@ -21,13 +70,23 @@ export default function AdminLogin({ onLoginSuccess }) {
           setLoading(false);
           return;
         }
+        localStorage.removeItem('admin_login_failed_attempts');
+        localStorage.removeItem('admin_login_lock_until');
         localStorage.setItem('admin_jwt_token', res.data.token);
         localStorage.setItem('admin_info', JSON.stringify(res.data));
         onLoginSuccess(res.data);
       }
     } catch (err) {
       console.error(err);
-      if ((username.trim().toLowerCase() === 'admin' || username.trim().toLowerCase() === 'admin@leadsgen.com') && password === 'admin123') {
+      const backendMsg = err.response?.data?.message;
+      if (backendMsg && (backendMsg.includes('bị khóa') || backendMsg.includes('lần thử'))) {
+        setError(backendMsg);
+        if (backendMsg.includes('bị khóa')) {
+          setLockSeconds(15 * 60);
+        }
+      } else if ((username.trim().toLowerCase() === 'admin' || username.trim().toLowerCase() === 'admin@leadsgen.com') && password === 'admin123') {
+        localStorage.removeItem('admin_login_failed_attempts');
+        localStorage.removeItem('admin_login_lock_until');
         const defaultAdmin = {
           id: 1,
           username: 'admin',
@@ -39,11 +98,18 @@ export default function AdminLogin({ onLoginSuccess }) {
         localStorage.setItem('admin_info', JSON.stringify(defaultAdmin));
         onLoginSuccess(defaultAdmin);
         return;
+      } else {
+        recordFailedAttempt(backendMsg);
       }
-      setError(err.response?.data?.message || 'Tên đăng nhập hoặc mật khẩu quản trị không chính xác.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const formatTimer = (sec) => {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -65,12 +131,22 @@ export default function AdminLogin({ onLoginSuccess }) {
           <p className="text-xs text-slate-400 mt-1">Đăng nhập tài khoản Admin để thẩm định & duyệt sáng kiến tập đoàn</p>
         </div>
 
-        {error && (
+        {lockSeconds > 0 ? (
+          <div className="mb-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Clock className="w-5 h-5 text-amber-400 animate-pulse" />
+              <span>Hệ thống tạm khóa do thử sai quá 5 lần</span>
+            </div>
+            <span className="font-mono text-sm font-bold text-amber-400 bg-slate-900 px-2.5 py-1 rounded-lg border border-amber-500/30">
+              {formatTimer(lockSeconds)}
+            </span>
+          </div>
+        ) : error ? (
           <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-start gap-3">
             <AlertCircle className="w-5 h-5 shrink-0 text-red-400 mt-0.5" />
             <p className="leading-relaxed">{error}</p>
           </div>
-        )}
+        ) : null}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -80,10 +156,11 @@ export default function AdminLogin({ onLoginSuccess }) {
               <input
                 type="text"
                 required
+                disabled={lockSeconds > 0}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="admin"
-                className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 text-sm font-semibold transition-all"
+                className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 text-sm font-semibold transition-all disabled:opacity-50"
               />
             </div>
           </div>
@@ -95,21 +172,24 @@ export default function AdminLogin({ onLoginSuccess }) {
               <input
                 type="password"
                 required
+                disabled={lockSeconds > 0}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 text-sm font-semibold transition-all"
+                className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 text-sm font-semibold transition-all disabled:opacity-50"
               />
             </div>
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
+            disabled={loading || lockSeconds > 0}
+            className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
               <span>Đang xác thực Admin...</span>
+            ) : lockSeconds > 0 ? (
+              <span>Thử lại sau ({formatTimer(lockSeconds)})</span>
             ) : (
               <>
                 <span>Vào Hệ Thống Quản Trị</span>

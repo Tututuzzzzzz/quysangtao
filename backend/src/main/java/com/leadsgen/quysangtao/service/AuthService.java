@@ -58,47 +58,76 @@ public class AuthService {
 
     @Transactional
     public AuthResponse login(AuthRequest request) {
+        return login(request, null);
+    }
+
+    @Transactional
+    public AuthResponse login(AuthRequest request, String clientIp) {
         String input = request.getUsernameOrEmail() != null ? request.getUsernameOrEmail().trim() : "";
         String pass = request.getPassword() != null ? request.getPassword().trim() : "";
 
-        if (("admin".equalsIgnoreCase(input) || "admin@leadsgen.com".equalsIgnoreCase(input)) && "admin123".equals(pass)) {
-            User adminUser = userRepository.findByUsername("admin")
-                    .orElseGet(() -> userRepository.findByEmail("admin@leadsgen.com").orElse(null));
+        String lockKey = (clientIp != null && !clientIp.isBlank()) ? clientIp + ":" + input : input;
 
-            if (adminUser == null) {
-                userRepository.save(User.builder()
-                        .username("admin")
-                        .email("admin@leadsgen.com")
-                        .password(passwordEncoder.encode("admin123"))
-                        .fullName("Ban Quản Trị LeadsGen")
-                        .department("Ban Giám Đốc")
-                        .role(UserRole.ROLE_ADMIN)
-                        .avatarUrl("https://api.dicebear.com/7.x/avataaars/svg?seed=Admin")
-                        .build());
-            }
+        if (loginAttemptService.isBlocked(lockKey) || loginAttemptService.isBlocked(input)) {
+            long remainingSec = loginAttemptService.getRemainingLockSeconds(lockKey);
+            if (remainingSec <= 0) remainingSec = loginAttemptService.getRemainingLockSeconds(input);
+            long minutes = Math.max(1, (remainingSec + 59) / 60);
+            throw new RuntimeException("Tài khoản hoặc thiết bị của bạn đã bị khóa tạm thời do thử sai quá 5 lần liên tiếp. Vui lòng thử lại sau khoảng " + minutes + " phút!");
         }
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(input, pass));
+        try {
+            if (("admin".equalsIgnoreCase(input) || "admin@leadsgen.com".equalsIgnoreCase(input)) && "admin123".equals(pass)) {
+                User adminUser = userRepository.findByUsername("admin")
+                        .orElseGet(() -> userRepository.findByEmail("admin@leadsgen.com").orElse(null));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+                if (adminUser == null) {
+                    userRepository.save(User.builder()
+                            .username("admin")
+                            .email("admin@leadsgen.com")
+                            .password(passwordEncoder.encode("admin123"))
+                            .fullName("Ban Quản Trị LeadsGen")
+                            .department("Ban Giám Đốc")
+                            .role(UserRole.ROLE_ADMIN)
+                            .avatarUrl("https://api.dicebear.com/7.x/avataaars/svg?seed=Admin")
+                            .build());
+                }
+            }
 
-        User user = userRepository.findByUsername(input)
-                .orElseGet(() -> userRepository.findByEmail(input)
-                        .orElseThrow(() -> new RuntimeException("User not found")));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(input, pass));
 
-        String token = jwtUtils.generateJwtToken(user.getUsername(), user.getRole().name(), user.getId());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        return AuthResponse.builder()
-                .token(token)
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .department(user.getDepartment())
-                .role(user.getRole())
-                .avatarUrl(user.getAvatarUrl())
-                .build();
+            User user = userRepository.findByUsername(input)
+                    .orElseGet(() -> userRepository.findByEmail(input)
+                            .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin tài khoản.")));
+
+            // Reset failed attempts on success
+            loginAttemptService.loginSucceeded(lockKey);
+            loginAttemptService.loginSucceeded(input);
+
+            String token = jwtUtils.generateJwtToken(user.getUsername(), user.getRole().name(), user.getId());
+
+            return AuthResponse.builder()
+                    .token(token)
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .email(user.getEmail())
+                    .fullName(user.getFullName())
+                    .department(user.getDepartment())
+                    .role(user.getRole())
+                    .avatarUrl(user.getAvatarUrl())
+                    .build();
+        } catch (AuthenticationException e) {
+            loginAttemptService.loginFailed(lockKey);
+            loginAttemptService.loginFailed(input);
+
+            int remaining = loginAttemptService.getRemainingAttempts(lockKey);
+            if (remaining <= 0) {
+                throw new RuntimeException("Tài khoản đã bị tạm khóa 15 phút do nhập sai mật khẩu 5 lần liên tiếp!");
+            }
+            throw new RuntimeException("Tên đăng nhập hoặc mật khẩu không chính xác. Bạn còn " + remaining + " lần thử trước khi bị khóa tạm thời 15 phút.");
+        }
     }
 
     public User getCurrentUser() {
