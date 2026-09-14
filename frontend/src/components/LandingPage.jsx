@@ -185,25 +185,28 @@ export default function LandingPage() {
     if (carouselTrackRef.current) {
       const itemWidth = 360 + 24;
       const index = Math.round(carouselTrackRef.current.scrollLeft / itemWidth);
-      const maxIdx = Math.max(0, leaderboardItems.length - 1);
-      setActiveCarouselDot(Math.min(Math.max(index, 0), maxIdx));
+      const maxIdx = Math.max(0, (leaderboardItems?.length || 1) - 1);
+      const clamped = Math.min(Math.max(index, 0), maxIdx);
+      setActiveCarouselDot((prev) => (prev === clamped ? prev : clamped));
     }
   };
 
   // Auto-scroll Carousel effect (mỗi 4 giây lướt 1 lần)
   useEffect(() => {
-    if (isCarouselHovered || leaderboardItems.length <= 1) return;
+    if (isCarouselHovered || !Array.isArray(leaderboardItems) || leaderboardItems.length <= 1) return;
     const interval = setInterval(() => {
       if (carouselTrackRef.current) {
         const itemWidth = 360 + 24;
         const maxIndex = leaderboardItems.length - 1;
-        const nextIndex = activeCarouselDot >= maxIndex ? 0 : activeCarouselDot + 1;
-        carouselTrackRef.current.scrollTo({ left: nextIndex * itemWidth, behavior: 'smooth' });
-        setActiveCarouselDot(nextIndex);
+        setActiveCarouselDot((prevDot) => {
+          const nextIndex = prevDot >= maxIndex ? 0 : prevDot + 1;
+          carouselTrackRef.current?.scrollTo({ left: nextIndex * itemWidth, behavior: 'smooth' });
+          return nextIndex;
+        });
       }
     }, 4000);
     return () => clearInterval(interval);
-  }, [activeCarouselDot, isCarouselHovered, leaderboardItems.length]);
+  }, [isCarouselHovered, leaderboardItems]);
 
   // Dashboard Stats & Leaderboard API state
   const [stats, setStats] = useState({
