@@ -11,9 +11,11 @@ export default function CoreValuesSection() {
         <h2 className="font-headline-xl text-3xl md:text-4xl font-black text-slate-900 mt-3 tracking-tight">
           Idea → Action → Impact → Recognition
         </h2>
-        <p className="font-body-md text-slate-600 mt-3 text-base leading-relaxed font-medium">
-          Quỹ Sáng tạo & Cải tiến không chỉ là quỹ thưởng mà là cơ chế xây dựng văn hóa đổi mới liên tục: <br className="hidden sm:inline" />
-          <strong className="text-slate-900">Nhìn thấy vấn đề → Đề xuất → Được hỗ trợ thử nghiệm → Tạo giá trị → Được ghi nhận.</strong>
+        <p className="font-body-md text-slate-600 mt-3 text-base leading-relaxed font-medium max-w-4xl mx-auto">
+          Quỹ Sáng tạo & Cải tiến không chỉ là quỹ thưởng mà là cơ chế xây dựng văn hóa đổi mới liên tục:{' '}
+          <span className="whitespace-nowrap font-bold text-slate-900">
+            Nhìn thấy vấn đề → Đề xuất → Hỗ trợ thử nghiệm → Tạo giá trị → Ghi nhận.
+          </span>
         </p>
       </div>
 

@@ -133,9 +133,11 @@ export default function HeroSection({ stats }) {
         </h1>
 
         {/* Sub-headline */}
-        <p className="font-body-lg text-lg md:text-xl text-slate-600 mt-4 max-w-2xl font-normal leading-relaxed">
-          Nơi mọi ý tưởng của CBNV LeadsGen đều được biến thành hành động: <br className="hidden sm:inline" />
-          <strong className="text-slate-900 font-semibold">Nhìn thấy vấn đề → Đề xuất → Hỗ trợ thử nghiệm → Tạo giá trị → Ghi nhận.</strong>
+        <p className="font-body-lg text-base sm:text-lg md:text-xl text-slate-600 mt-4 max-w-5xl font-normal leading-relaxed">
+          Nơi mọi ý tưởng của CBNV LeadsGen đều được biến thành hành động:{' '}
+          <span className="whitespace-nowrap font-bold text-slate-900">
+            Nhìn thấy vấn đề → Đề xuất → Hỗ trợ thử nghiệm → Tạo giá trị → Ghi nhận.
+          </span>
         </p>
 
         {/* CTA Buttons */}
