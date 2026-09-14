@@ -888,58 +888,95 @@ export default function LandingPage() {
           <div
             ref={carouselTrackRef}
             onScroll={handleCarouselScroll}
-            className="flex gap-6 overflow-x-auto hide-scrollbar scroll-smooth pb-4"
+            className="flex gap-6 overflow-x-auto hide-scrollbar scroll-smooth pb-4 pt-2"
           >
             {leaderboardItems.length > 0 ? (
-              leaderboardItems.map((item, idx) => (
-                <div
-                  key={item.userId || item.employeeCode || idx}
-                  className="min-w-[320px] md:min-w-[360px] max-w-[380px] p-6 rounded-2xl bg-white border border-slate-200 flex flex-col justify-between shrink-0 hover:border-orange-400 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 shadow-sm"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="px-2.5 py-1 rounded-full bg-sky-50 text-sky-700 text-xs font-label-sm font-semibold border border-sky-200">
-                        {item.department || 'Phòng Ban LeadsGen'}
+              leaderboardItems.map((item, idx) => {
+                const rankNum = item.rank || idx + 1;
+                const isTop1 = rankNum === 1;
+                const isTop2 = rankNum === 2;
+                const isTop3 = rankNum === 3;
+
+                return (
+                  <div
+                    key={item.userId || item.employeeCode || idx}
+                    className="group relative min-w-[270px] sm:min-w-[290px] max-w-[310px] h-[390px] rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 shrink-0 border border-slate-200/80 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-950 text-white flex flex-col justify-between"
+                  >
+                    {/* Poster Glow & Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent z-10 pointer-events-none" />
+
+                    {/* Top Header Rank Tag */}
+                    <div className="relative z-20 p-4 flex items-center justify-between gap-2">
+                      <span className="px-2.5 py-1 rounded-full bg-slate-900/80 backdrop-blur-md text-slate-200 text-[11px] font-label-sm font-semibold border border-slate-700/80">
+                        {item.department || 'LeadsGen'}
                       </span>
-                      <div className="flex items-center gap-1.5">
-                        {item.employeeCode && (
-                          <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-mono font-bold border border-slate-200">
-                            {item.employeeCode}
+                      <div className="flex items-center gap-1">
+                        {isTop1 && (
+                          <span className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-slate-950 font-black text-xs shadow-md border border-amber-300 flex items-center gap-1 animate-pulse">
+                            👑 TOP #1
                           </span>
                         )}
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-mono-metric font-bold border border-amber-200">
-                          <span className="material-symbols-outlined text-[14px]">military_tech</span> Top #{item.rank || idx + 1}
+                        {isTop2 && (
+                          <span className="px-3 py-1 rounded-full bg-gradient-to-r from-slate-200 to-slate-400 text-slate-950 font-black text-xs shadow-md border border-slate-100 flex items-center gap-1">
+                            🥈 TOP #2
+                          </span>
+                        )}
+                        {isTop3 && (
+                          <span className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-600 to-amber-700 text-white font-black text-xs shadow-md border border-amber-500 flex items-center gap-1">
+                            🥉 TOP #3
+                          </span>
+                        )}
+                        {!isTop1 && !isTop2 && !isTop3 && (
+                          <span className="px-3 py-1 rounded-full bg-slate-800/90 text-slate-300 font-bold text-xs border border-slate-700">
+                            TOP #{rankNum}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Center Poster Image / Avatar Spotlight */}
+                    <div className="absolute inset-0 flex items-center justify-center -mt-6">
+                      <div className="relative group-hover:scale-105 transition-transform duration-500">
+                        {item.avatarUrl ? (
+                          <img
+                            src={item.avatarUrl}
+                            alt={item.fullName}
+                            className="w-32 h-32 rounded-full object-cover border-4 border-white/20 shadow-2xl ring-4 ring-orange-500/30"
+                          />
+                        ) : (
+                          <div className="w-32 h-32 rounded-full bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center font-black text-white text-4xl shadow-2xl border-4 border-white/20 ring-4 ring-orange-500/30">
+                            {String(item.fullName || 'U').charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        {item.employeeCode && (
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-2.5 py-0.5 rounded-full bg-orange-500 text-white font-mono text-[10px] font-bold shadow-md border border-white/30 whitespace-nowrap">
+                            {item.employeeCode}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Bottom Poster Metadata Info Card */}
+                    <div className="relative z-20 p-5 space-y-2 text-left">
+                      <h4 className="font-headline-md text-lg font-black text-white tracking-tight line-clamp-1 group-hover:text-orange-400 transition-colors">
+                        {item.fullName}
+                      </h4>
+                      <p className="text-[11px] text-slate-300 leading-snug line-clamp-2">
+                        ⭐ Đã đóng góp <strong className="text-orange-400 font-bold">{item.totalIdeas || 0} sáng kiến</strong> ({item.implementedIdeas || 0} dự án đã thực thi).
+                      </p>
+
+                      <div className="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                          Điểm Vinh Danh
+                        </span>
+                        <span className="px-3 py-1 rounded-full bg-orange-500/20 text-orange-400 font-mono-metric font-black text-xs border border-orange-500/40">
+                          {(item.totalScore || 0).toLocaleString('vi-VN')} PTS
                         </span>
                       </div>
                     </div>
-                    <h4 className="font-headline-sm text-base font-bold text-slate-900 line-clamp-2">
-                      {item.fullName}
-                    </h4>
-                    <p className="font-body-sm text-xs text-slate-600 mt-2 line-clamp-3">
-                      Đã đóng góp {item.totalIdeas || 0} sáng kiến và triển khai thành công {item.implementedIdeas || 0} dự án cho tập đoàn.
-                    </p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      {item.avatarUrl ? (
-                        <img
-                          src={item.avatarUrl}
-                          alt={item.fullName}
-                          className="w-7 h-7 rounded-full object-cover ring-1 ring-orange-400"
-                        />
-                      ) : (
-                        <div className="w-7 h-7 rounded-full bg-orange-500 flex items-center justify-center font-bold text-white text-[11px]">
-                          {String(item.fullName || 'U').charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                      <span className="font-semibold text-slate-800">{item.fullName}</span>
-                    </div>
-                    <span className="px-2 py-0.5 rounded bg-orange-50 text-orange-700 font-mono-metric font-bold text-[11px] border border-orange-200">
-                      {(item.totalScore || 0).toLocaleString('vi-VN')} Đóng góp
-                    </span>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div className="p-8 text-center text-slate-500 text-sm w-full bg-white rounded-2xl border border-slate-200">
                 Chưa có dữ liệu vinh danh. Hãy nộp sáng kiến đầu tiên để lên bảng vàng!
