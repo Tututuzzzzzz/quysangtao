@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../services/api';
+import { formatCompactCurrency } from '../utils/formatCurrency';
 import { X, Award, DollarSign, Tag, Check, AlertCircle } from 'lucide-react';
 
 export default function IdeaEvaluationModal({ idea, onClose, onSave }) {
@@ -129,7 +130,12 @@ export default function IdeaEvaluationModal({ idea, onClose, onSave }) {
 
           {/* Savings Financials */}
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Ước tính chi phí tiết kiệm (VNĐ/năm)</label>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">Ước tính chi phí tiết kiệm (VNĐ/năm)</label>
+              <span className="text-xs font-mono font-bold text-emerald-400">
+                {formatCompactCurrency(estimatedSavings).fullString}
+              </span>
+            </div>
             <input
               type="number"
               value={estimatedSavings}
@@ -140,7 +146,12 @@ export default function IdeaEvaluationModal({ idea, onClose, onSave }) {
 
           {/* Required Budget */}
           <div>
-            <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1">Vốn đầu tư PoC đề xuất (VNĐ)</label>
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-xs font-bold text-slate-300 uppercase tracking-wider">Vốn đầu tư PoC đề xuất (VNĐ)</label>
+              <span className="text-xs font-mono font-bold text-sky-400">
+                {formatCompactCurrency(requiredBudget).fullString}
+              </span>
+            </div>
             <input
               type="number"
               value={requiredBudget}
