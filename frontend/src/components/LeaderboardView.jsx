@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import { formatCompactCurrency } from '../utils/formatCurrency';
 import { 
   Trophy, 
   Award, 
@@ -58,10 +59,10 @@ export default function LeaderboardView() {
           </div>
 
           {stats && (
-            <div className="bg-white/15 border border-white/30 backdrop-blur-md rounded-2xl p-5 text-right shrink-0 shadow-sm">
+            <div className="bg-white/15 border border-white/30 backdrop-blur-md rounded-2xl p-5 text-right shrink-0 shadow-sm whitespace-nowrap min-w-[180px]">
               <span className="text-xs font-label-sm font-bold text-amber-100 uppercase tracking-wider block">Tổng chi phí tiết kiệm</span>
-              <span className="font-mono-metric text-2xl font-black text-white mt-1 block">
-                {(stats.totalImplementedSavings || 0).toLocaleString('vi-VN')} VNĐ
+              <span className="font-mono-metric text-xl sm:text-2xl font-black text-white mt-1 block">
+                {formatCompactCurrency(stats.totalImplementedSavings || 0).fullString}
               </span>
             </div>
           )}

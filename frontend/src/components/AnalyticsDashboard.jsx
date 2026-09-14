@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import { formatCompactCurrency } from '../utils/formatCurrency';
 import { 
   BarChart, 
   Bar, 
@@ -107,10 +108,10 @@ export default function AnalyticsDashboard() {
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs">
+        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-xs whitespace-nowrap min-w-0">
           <span className="text-xs font-semibold text-indigo-600">Tổng giá trị tiết kiệm thực tế</span>
-          <p className="text-xl font-extrabold text-indigo-600 mt-1">
-            {Number(stats.totalImplementedSavings || 0).toLocaleString('vi-VN')} đ
+          <p className="text-xl font-extrabold text-indigo-600 mt-1 truncate">
+            {formatCompactCurrency(stats.totalImplementedSavings || 0).fullString}
           </p>
         </div>
       </div>

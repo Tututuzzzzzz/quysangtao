@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import { formatCompactCurrency } from '../utils/formatCurrency';
 import { 
   TrendingUp, 
   DollarSign, 
@@ -54,13 +55,14 @@ export default function AnalyticsDashboard() {
           <span className="text-[11px] text-slate-400">Đã nộp toàn tập đoàn</span>
         </div>
 
-        <div className="p-6 rounded-2xl bg-slate-800 border border-slate-700/80 border-t-4 border-t-emerald-500 space-y-2">
+        <div className="p-6 rounded-2xl bg-slate-800 border border-slate-700/80 border-t-4 border-t-emerald-500 space-y-2 whitespace-nowrap min-w-0">
           <div className="flex items-center justify-between text-slate-400 text-xs font-bold uppercase tracking-wider">
             <span>Tổng Tiết Kiệm</span>
             <DollarSign className="w-5 h-5 text-emerald-400" />
           </div>
-          <div className="text-3xl font-mono font-extrabold text-white">
-            {(stats.totalImplementedSavings || 0).toLocaleString('vi-VN')} <span className="text-sm text-emerald-400 font-bold">VNĐ</span>
+          <div className="text-2xl sm:text-3xl font-mono font-extrabold text-white truncate">
+            {formatCompactCurrency(stats.totalImplementedSavings || 0).value}{' '}
+            <span className="text-sm text-emerald-400 font-bold">{formatCompactCurrency(stats.totalImplementedSavings || 0).unit}</span>
           </div>
           <span className="text-[11px] text-emerald-400 font-bold">Tối ưu chi phí thực tế</span>
         </div>

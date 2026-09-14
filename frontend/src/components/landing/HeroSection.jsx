@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { formatCompactCurrency } from '../../utils/formatCurrency';
 
 export default function HeroSection({ stats }) {
   // Typewriter effect state
@@ -165,16 +166,14 @@ export default function HeroSection({ stats }) {
             </span>
             <span className="font-label-sm text-xs text-slate-500 uppercase tracking-wider mt-1 font-semibold">Sáng kiến đã nộp</span>
           </div>
-          <div className="glass-panel p-6 rounded-2xl flex flex-col items-center text-center glow-hover border-t-4 border-t-amber-500">
+          <div className="glass-panel p-5 sm:p-6 rounded-2xl flex flex-col items-center text-center glow-hover border-t-4 border-t-amber-500 min-w-0">
             <span className="material-symbols-outlined text-amber-500 text-[32px] mb-1">payments</span>
-            <div className="flex items-baseline gap-1">
-              <span className="font-mono-metric text-2xl sm:text-3xl font-bold text-slate-900">
-                {Number(stats?.totalImplementedSavings || 0) >= 1000000000
-                  ? (Number(stats?.totalImplementedSavings || 0) / 1000000000).toFixed(1)
-                  : Number(stats?.totalImplementedSavings || 0).toLocaleString('vi-VN')}
+            <div className="flex items-baseline gap-1 whitespace-nowrap max-w-full overflow-hidden">
+              <span className="font-mono-metric text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 truncate">
+                {formatCompactCurrency(stats?.totalImplementedSavings || 0).value}
               </span>
-              <span className="font-mono-metric text-lg text-amber-600 font-bold">
-                {Number(stats?.totalImplementedSavings || 0) >= 1000000000 ? 'Tỷ' : 'VNĐ'}
+              <span className="font-mono-metric text-sm sm:text-base lg:text-lg text-amber-600 font-bold shrink-0">
+                {formatCompactCurrency(stats?.totalImplementedSavings || 0).unit}
               </span>
             </div>
             <span className="font-label-sm text-xs text-slate-500 uppercase tracking-wider mt-1 font-semibold">Tiết kiệm / Giải ngân</span>
