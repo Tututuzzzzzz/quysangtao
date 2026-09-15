@@ -9,6 +9,13 @@ export default function AdminLogin({ onLoginSuccess }) {
   const [loading, setLoading] = useState(false);
   const [lockSeconds, setLockSeconds] = useState(0);
 
+  const [warmupText, setWarmupText] = useState('');
+
+  // Auto ping backend on mount to trigger Render cold start early
+  useEffect(() => {
+    api.get('/categories').catch(() => {});
+  }, []);
+
   // Check initial local lockout state
   useEffect(() => {
     const lockUntil = localStorage.getItem('admin_login_lock_until');
@@ -23,7 +30,7 @@ export default function AdminLogin({ onLoginSuccess }) {
     }
   }, []);
 
-  // Timer countdown interval
+  // Timer countdown interval for lockout
   useEffect(() => {
     if (lockSeconds <= 0) return;
     const timer = setInterval(() => {
@@ -39,6 +46,26 @@ export default function AdminLogin({ onLoginSuccess }) {
     }, 1000);
     return () => clearInterval(timer);
   }, [lockSeconds]);
+
+  // Handle slow connection / cold start notification timer when loading
+  useEffect(() => {
+    if (!loading) {
+      setWarmupText('');
+      return;
+    }
+    const timer1 = setTimeout(() => {
+      setWarmupText('⚡ Đang khởi động máy chủ (Render Cold Start ~30s)...');
+    }, 3000);
+
+    const timer2 = setTimeout(() => {
+      setWarmupText('🚀 Máy chủ đang sẵn sàng, vui lòng giữ nguyên màn hình...');
+    }, 15000);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
+  }, [loading]);
 
   const recordFailedAttempt = (errMsg) => {
     let attempts = parseInt(localStorage.getItem('admin_login_failed_attempts') || '0', 10) + 1;
@@ -84,8 +111,14 @@ export default function AdminLogin({ onLoginSuccess }) {
         if (backendMsg.includes('bị khóa')) {
           setLockSeconds(15 * 60);
         }
-      } else {
+      } else if (err.response && (err.response.status === 401 || err.response.status === 400)) {
+        // Only count failed attempt when backend returns explicit 401/400 authentication failure
         recordFailedAttempt(backendMsg);
+      } else if (err.code === 'ECONNABORTED' || !err.response) {
+        // Network timeout or Render cold start delay - DO NOT deduct failed attempts!
+        setError('Kết nối máy chủ bị chậm hoặc máy chủ đang trong quá trình khởi động (Render Cold Start). Vui lòng thử lại sau vài giây!');
+      } else {
+        setError(backendMsg || 'Có lỗi kết nối máy chủ. Vui lòng thử lại.');
       }
     } finally {
       setLoading(false);
@@ -175,7 +208,10 @@ export default function AdminLogin({ onLoginSuccess }) {
             className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-600 hover:to-amber-600 text-white font-bold text-sm shadow-lg shadow-orange-500/25 transition-all flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? (
-              <span>Đang xác thực Admin...</span>
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Đang xác thực Admin...</span>
+              </span>
             ) : lockSeconds > 0 ? (
               <span>Thử lại sau ({formatTimer(lockSeconds)})</span>
             ) : (
@@ -185,6 +221,12 @@ export default function AdminLogin({ onLoginSuccess }) {
               </>
             )}
           </button>
+
+          {warmupText && (
+            <p className="text-center text-xs text-amber-400/90 bg-amber-500/10 py-2 px-3 rounded-lg border border-amber-500/20 animate-pulse">
+              {warmupText}
+            </p>
+          )}
         </form>
 
         <div className="mt-8 text-center text-xs text-slate-500">
