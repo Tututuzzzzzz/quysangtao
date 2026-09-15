@@ -8,23 +8,17 @@ export default function App() {
   const [admin, setAdmin] = useState(() => {
     try {
       const saved = localStorage.getItem('admin_info');
-      if (saved && saved !== 'undefined' && saved !== 'null') {
+      const token = localStorage.getItem('admin_jwt_token');
+      if (saved && saved !== 'undefined' && saved !== 'null' && token) {
         return JSON.parse(saved);
       }
     } catch (e) {
       console.warn("Lỗi đọc admin_info từ localStorage:", e);
-      localStorage.removeItem('admin_info');
     }
-    const defaultAdmin = {
-      id: 1,
-      username: 'admin',
-      email: 'admin@leadsgen.com',
-      fullName: 'Ban Quản Trị LeadsGen',
-      department: 'Ban Giám Đốc',
-      role: 'ROLE_ADMIN'
-    };
-    localStorage.setItem('admin_info', JSON.stringify(defaultAdmin));
-    return defaultAdmin;
+    // Strictly clear invalid sessions and require explicit login
+    localStorage.removeItem('admin_info');
+    localStorage.removeItem('admin_jwt_token');
+    return null;
   });
   const [activeTab, setActiveTab] = useState('kanban');
 
@@ -57,7 +51,7 @@ export default function App() {
       </main>
 
       <footer className="py-4 border-t border-slate-800 text-center text-xs text-slate-500">
-        LeadsGen Innovation Hub • Admin Control Panel (Port 5174)
+        LeadsGen Innovation Hub • Admin Control Panel
       </footer>
     </div>
   );
