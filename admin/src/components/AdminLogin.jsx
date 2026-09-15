@@ -84,20 +84,6 @@ export default function AdminLogin({ onLoginSuccess }) {
         if (backendMsg.includes('bị khóa')) {
           setLockSeconds(15 * 60);
         }
-      } else if ((username.trim().toLowerCase() === 'admin' || username.trim().toLowerCase() === 'admin@leadsgen.com') && password === 'admin123') {
-        localStorage.removeItem('admin_login_failed_attempts');
-        localStorage.removeItem('admin_login_lock_until');
-        const defaultAdmin = {
-          id: 1,
-          username: 'admin',
-          email: 'admin@leadsgen.com',
-          fullName: 'Ban Quản Trị LeadsGen',
-          department: 'Ban Giám Đốc',
-          role: 'ROLE_ADMIN'
-        };
-        localStorage.setItem('admin_info', JSON.stringify(defaultAdmin));
-        onLoginSuccess(defaultAdmin);
-        return;
       } else {
         recordFailedAttempt(backendMsg);
       }
@@ -148,7 +134,7 @@ export default function AdminLogin({ onLoginSuccess }) {
           </div>
         ) : null}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} autoComplete="off" className="space-y-5">
           <div>
             <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Tên đăng nhập Admin</label>
             <div className="relative">
@@ -156,10 +142,11 @@ export default function AdminLogin({ onLoginSuccess }) {
               <input
                 type="text"
                 required
+                autoComplete="off"
                 disabled={lockSeconds > 0}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="admin"
+                placeholder="Nhập tên đăng nhập admin"
                 className="w-full pl-11 pr-4 py-3 rounded-xl bg-slate-900/80 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 text-sm font-semibold transition-all disabled:opacity-50"
               />
             </div>
@@ -172,6 +159,7 @@ export default function AdminLogin({ onLoginSuccess }) {
               <input
                 type="password"
                 required
+                autoComplete="new-password"
                 disabled={lockSeconds > 0}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
