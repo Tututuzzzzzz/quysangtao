@@ -118,11 +118,14 @@ export default function HeroSection({ stats }) {
 
       <div className="max-w-5xl mx-auto text-center flex flex-col items-center z-10">
         {/* Top Pill Tag */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/95 border border-orange-200 shadow-sm backdrop-blur-md mb-6 animate-pulse">
-          <span className="material-symbols-outlined text-orange-500 text-[18px]">auto_awesome</span>
-          <span className="font-label-sm text-xs uppercase tracking-widest text-orange-600 font-extrabold">
-            Idea → Action → Impact → Recognition • Dám Nghĩ → Dám Thử → Tạo Tác Động
-          </span>
+        <div className="inline-flex flex-col items-center gap-0.5 px-5 py-2.5 rounded-2xl bg-white/95 border border-orange-200 shadow-sm backdrop-blur-md mb-6 animate-pulse text-center">
+          <div className="inline-flex items-center gap-1.5 font-label-sm text-xs uppercase tracking-widest text-orange-600 font-black whitespace-nowrap">
+            <span className="material-symbols-outlined text-orange-500 text-[18px]">auto_awesome</span>
+            <span>Idea → Action → Impact → Recognition</span>
+          </div>
+          <div className="font-label-sm text-xs uppercase tracking-wider text-slate-700 font-extrabold whitespace-nowrap">
+            Dám Nghĩ → Dám Thử → Tạo Tác Động
+          </div>
         </div>
 
         {/* Headline with Typewriter Effect */}
